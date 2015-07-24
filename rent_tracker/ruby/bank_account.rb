@@ -1,5 +1,5 @@
 class BankAccount
-    attr_accessor :bank, :branch, :account_num, :balance, :transaction_collection
+    attr_accessor :account_num, :balance, :transaction_collection
     
     def initialize()
         @transaction_collection = TransactionCollection.new
