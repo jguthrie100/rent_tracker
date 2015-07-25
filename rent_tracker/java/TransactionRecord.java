@@ -1,19 +1,23 @@
+import java.util.Date;
+import java.lang.Math;
+
 class TransactionRecord {
-  private String date, type, chequeNum, payee, memo;
-  private Double amount;
+  private Date date;
+  private String type, chequeNum, payee, memo;
   private int id;
+  private Double amount;
   
-  TransactionRecord(String date, int id, String type, String chequeNum, String payee, String memo, Double amount) {
+  TransactionRecord(Date date, int id, String type, String chequeNum, String payee, String memo, Double amount) {
     this.date = date;
     this.id = id;
     this.type = type;
     this.chequeNum = chequeNum;
     this.payee = payee;
     this.memo = memo;
-    this.amount = amount;
+    this.amount = Math.round(amount*100)/100.0;
   }
   
-  public String getDate() {
+  public Date getDate() {
     return this.date;
   }
   
@@ -39,9 +43,5 @@ class TransactionRecord {
   
   public Double getAmount() {
     return this.amount;
-  }
-  
-  public void tester(String str) {
-    System.out.println(str);
   }
 }

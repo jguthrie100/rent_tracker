@@ -1,26 +1,27 @@
 import java.util.ArrayList;
+import java.util.Date;
 
 class TransactionCollection {
   private ArrayList<TransactionRecord> tRecords;
-  private String dateFrom, dateTo;
+  private Date dateFrom, dateTo;
   
   TransactionCollection() {
     tRecords = new ArrayList<>();
   }
   
-  public void setDateFrom(String dateFrom) {
+  public void setDateFrom(Date dateFrom) {
     this.dateFrom = dateFrom;
   }
   
-  public String getDateFrom() {
+  public Date getDateFrom() {
     return this.dateFrom;
   }
   
-  public void setDateTo(String dateTo) {
+  public void setDateTo(Date dateTo) {
     this.dateTo = dateTo;
   }
   
-  public String getDateTo() {
+  public Date getDateTo() {
     return this.dateTo;
   }
   

@@ -1,5 +1,7 @@
 import java.text.ParseException;
 import java.util.regex.*;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 class ASBParser implements StatementParser {
   public ASBParser() {
@@ -43,7 +45,7 @@ class ASBParser implements StatementParser {
       Pattern p = Pattern.compile("From date (\\d{8})");
       Matcher m = p.matcher(lineText);
       if(m.find()) {
-        bAcc.getTransactionCollection().setDateFrom(m.group(1).substring(0, 4) + "/" + m.group(1).substring(4, 6) + "/" + m.group(1).substring(6, 8));
+        bAcc.getTransactionCollection().setDateFrom(new SimpleDateFormat("yyyyMMdd").parse(m.group(1)));
       } else {
         throw new ParseException("Unable to parse line " + lineNum + ": " + lineText, 0);
       }
@@ -56,7 +58,8 @@ class ASBParser implements StatementParser {
       Pattern p = Pattern.compile("To date (\\d{8})");
       Matcher m = p.matcher(lineText);
       if(m.find()) {
-        bAcc.getTransactionCollection().setDateTo(m.group(1).substring(0, 4) + "/" + m.group(1).substring(4, 6) + "/" + m.group(1).substring(6, 8));
+        // m.group(1).substring(0, 4) + "/" + m.group(1).substring(4, 6) + "/" + m.group(1).substring(6, 8)
+        bAcc.getTransactionCollection().setDateTo(new SimpleDateFormat("yyyyMMdd").parse(m.group(1)));
       } else {
         throw new ParseException("Unable to parse line " + lineNum + ": " + lineText, 0);
       }
@@ -85,7 +88,7 @@ class ASBParser implements StatementParser {
       Matcher m = p.matcher(lineText);
       if(m.find()) {
         bAcc.getTransactionCollection().getTransactionRecords().add(
-          new TransactionRecord(m.group(1), Integer.parseInt(m.group(2)), m.group(3), m.group(4), m.group(5), m.group(6), Double.parseDouble(m.group(7)))
+          new TransactionRecord(new SimpleDateFormat("yyyy/MM/dd").parse(m.group(1)), Integer.parseInt(m.group(2)), m.group(3), m.group(4), m.group(5), m.group(6), Double.parseDouble(m.group(7)))
         );
       } else {
         throw new ParseException("Unable to parse line " + lineNum + ": " + lineText, 0);
