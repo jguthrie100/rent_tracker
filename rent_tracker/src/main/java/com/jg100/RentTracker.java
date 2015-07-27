@@ -15,7 +15,7 @@ public class RentTracker {
     
     if(args.length == 0) {
       System.out.println("Missing argument: Please pass String argument pointing to a CSV file");
-      System.out.println("e.g. java RentTracker \"../csv_files/asb_23072015.csv\" ");
+      System.out.println("e.g. java RentTracker \"../../../../../csv_files/asb_23072015.csv\" ");
       System.exit(0);
     } else {
       csv_file = args[0];
