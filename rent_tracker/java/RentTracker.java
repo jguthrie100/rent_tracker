@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.text.DecimalFormat;
 
 public class RentTracker {
   public static void main(String[] args) throws Exception {
@@ -20,7 +21,7 @@ public class RentTracker {
       csv_file = args[0];
     }
     
-    System.out.println("Opening file \"" + csv_file + "\"...");
+    System.out.println("Opening file: " + csv_file);
     try (BufferedReader br = new BufferedReader(new FileReader(csv_file)))
 		{
 			String sCurrentLine;
@@ -34,16 +35,18 @@ public class RentTracker {
         }
         counter++;
 			}
-			System.out.println("Found: " + csv_file);
+			System.out.println("Found file: " + csv_file);
  
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		Date dateFrom = new SimpleDateFormat("yyyy/MM/dd").parse("2014/11/22");
-		Date dateTo = new SimpleDateFormat("yyyy/MM/dd").parse("2014/11/25");
-		System.out.println("Income: " + calc.getIncome(bAcc, dateFrom, dateTo));
-		System.out.println("Outgoings: " + calc.getOutgoings(bAcc, dateFrom, dateTo));
-		System.out.println("Total: " + Math.round((calc.getIncome(bAcc, dateFrom, dateTo) + calc.getOutgoings(bAcc, dateFrom, dateTo))*100)/100.00);
+		Date dateFrom = new SimpleDateFormat("yyyy/MM/dd").parse("2014/11/18");
+		Date dateTo = new SimpleDateFormat("yyyy/MM/dd").parse("2015/07/23");
+		DecimalFormat df = new DecimalFormat("0.00");
+		
+		System.out.println("Income: $" + df.format(calc.getIncome(bAcc, dateFrom, dateTo)));
+		System.out.println("Outgoings: $" + df.format(calc.getOutgoings(bAcc, dateFrom, dateTo)));
+		System.out.println("Total: $" + df.format((calc.getIncome(bAcc, dateFrom, dateTo) + calc.getOutgoings(bAcc, dateFrom, dateTo))));
 	}
 }

@@ -1,5 +1,4 @@
 import java.util.Date;
-import java.lang.Math;
 
 class TransactionRecord {
   private Date date;
@@ -14,7 +13,7 @@ class TransactionRecord {
     this.chequeNum = chequeNum;
     this.payee = payee;
     this.memo = memo;
-    this.amount = Math.round(amount*100)/100.0;
+    this.amount = amount;
   }
   
   public Date getDate() {
@@ -43,5 +42,9 @@ class TransactionRecord {
   
   public Double getAmount() {
     return this.amount;
+  }
+  
+  public String toString() {
+    return (getDate().toString() + "; ID: " + getID() + "; Type: " + getType() + "; Cheque Num: " + getChequeNum() + "; Payee: " + getPayee() + "; Memo: " + getMemo() + "; Amount: " + getAmount());
   }
 }
