@@ -1,5 +1,5 @@
 class BankAccount {
-  private String accountNum = "";
+  private String accountID = "";
   private Double balance = 0.0;
   private TransactionCollection tCollection;
   
@@ -7,12 +7,12 @@ class BankAccount {
     tCollection = new TransactionCollection();
   }
   
-  public void setAccountNum(String accountNum) {
-    this.accountNum = accountNum;
+  public void setAccountID(String accountID) {
+    this.accountID = accountID;
   }
   
-  public String getAccountNum() {
-    return this.accountNum;
+  public String getAccountID() {
+    return this.accountID;
   }
   
   public void setBalance(Double balance) {

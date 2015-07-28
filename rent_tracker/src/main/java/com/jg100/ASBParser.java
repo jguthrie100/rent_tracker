@@ -26,13 +26,13 @@ class ASBParser implements StatementParser {
   public BankAccount parseLine(BankAccount bAcc, int lineNum, String lineText) throws ParseException {
     
     /*
-    Get bank account number 
+    Get bank account ID 
     */
     if(lineNum == 2) {
       Pattern p = Pattern.compile("^Bank (\\d+); Branch (\\d+); Account ([\\d\\-]+)");
       Matcher m = p.matcher(lineText);
       if(m.find()) {
-        bAcc.setAccountNum(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
+        bAcc.setAccountID(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
       } else {
         throw new ParseException("Unable to parse line " + lineNum + ": " + lineText, 0);
       }
@@ -87,8 +87,13 @@ class ASBParser implements StatementParser {
       Pattern p = Pattern.compile("^(.*),(.*),(.*),(.*),\"(.*)\",\"(.*)\",(.*)$");
       Matcher m = p.matcher(lineText);
       if(m.find()) {
+        
+        /*
+         * Add code that works out if transaction is a rental payment or not 
+         */
+         
         bAcc.getTransactionCollection().getTransactionRecords().add(
-          new TransactionRecord(new SimpleDateFormat("yyyy/MM/dd").parse(m.group(1)), Integer.parseInt(m.group(2)), m.group(3), m.group(4), m.group(5), m.group(6), Double.parseDouble(m.group(7)))
+          new TransactionRecord(bAcc.getAccountID(), new SimpleDateFormat("yyyy/MM/dd").parse(m.group(1)), Integer.parseInt(m.group(2)), m.group(3), m.group(4), m.group(5), m.group(6), Double.parseDouble(m.group(7)), false)
         );
       } else {
         throw new ParseException("Unable to parse line " + lineNum + ": " + lineText, 0);

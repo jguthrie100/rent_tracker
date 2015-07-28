@@ -12,10 +12,11 @@ public class RentTracker {
     BankAccount bAcc = new BankAccount();
     ASBParser asbParser = new ASBParser();
     Calculator calc = new Calculator();
+    CalendarAccessor calendar = new CalendarAccessor();
     
     if(args.length == 0) {
       System.out.println("Missing argument: Please pass String argument pointing to a CSV file");
-      System.out.println("e.g. java RentTracker \"../../../../../csv_files/asb_23072015.csv\" ");
+      System.out.println("e.g. java RentTracker \"/home/jg100/.config/asb_23072015.csv\" ");
       System.exit(0);
     } else {
       csv_file = args[0];
@@ -39,6 +40,10 @@ public class RentTracker {
  
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		
+		for(TransactionRecord tr : bAcc.getTransactionCollection().getTransactionRecords()) {
+		  calendar.addTransaction(tr);
 		}
 		
 		Date dateFrom = new SimpleDateFormat("yyyy/MM/dd").parse("2014/11/18");

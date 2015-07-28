@@ -5,7 +5,7 @@ require './transaction_record'
 require './transaction_collection'
 
 
-file_name = "../csv_files/asb_23072015.csv"
+file_name = "../../../../../csv_files/asb_23072015.csv"
 csv_type = "ASB"
 
 bank_acc = BankAccount.new
