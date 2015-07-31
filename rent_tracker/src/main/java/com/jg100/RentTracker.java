@@ -12,24 +12,6 @@ public class RentTracker {
   
   public static void main(String[] args) throws Exception {
     String csv_file = "";
-    ArrayList<House> houseList = new ArrayList<House>();
-    BankAccount bAcc = new BankAccount();
-    ASBParser asbParser = new ASBParser();
-    Calculator calc = new Calculator();
-    CalendarAccessor calendar = new CalendarAccessor();
-    
-    houseList.add(new House("586B Maunganui Road, Mt Maunganui", "586B Maunganui Road, Mount Maunganui, Tauranga 3116, New Zealand", 3, 400.00, 34.50));
-    houseList.add(new House("128A Fernhill Road, Queenstown", "128A Fernhill Road, Fernhill, Queenstown 9300, New Zealand", 3, 450.00, 0.00));
-    
-    // List of tenants - later versions can store this in an .xml file 
-    Date date = new Date();
-    houseList.get(0).getTenantList().add(new Tenant("Florence Guthrie", "F S A GUTHRIE, J D S", "0123456789", "flo_guthrie@gmail.com", date, 350.00, 1));
-    houseList.get(0).getTenantList().add(new Tenant("Realty Focus Ltd", "REALTY FOCUS LTD", "01234567890123", "realty_focus@gmail.com", date, 365.50, 2));
-    houseList.get(1).getTenantList().add(new Tenant("Florence Guthrie", "F S A GUTHRIE", "0123456789", "flo_guthrie@gmail.com", date, 450.00, 1));
-    houseList.get(1).getTenantList().add(new Tenant("Hannah Caithness", "CAITHNESS, H W", "01234567890", "hannah_caithness@gmail.com", date, 450.00, 1));
-    houseList.get(1).getTenantList().add(new Tenant("Josh Goodbourn", "Goodbourn J T", "012345678901", "josh_goodbourn@gmail.com", date, 150.00, 1));
-    houseList.get(1).getTenantList().add(new Tenant("James Ronaldson", "RONALDSON J", "0123456789012", "james_ronaldson@gmail.com", date, 150.00, 1));
-    houseList.get(1).getTenantList().add(new Tenant("Steven Anglin", "S S ANGLIN", "01234567890123", "steven_anglin@gmail.com", date, 150.00, 1));
     
     if(args.length == 0) {
       System.out.println("Missing argument: Please pass String argument pointing to a CSV file");
@@ -38,6 +20,28 @@ public class RentTracker {
     } else {
       csv_file = args[0];
     }
+    
+    ArrayList<House> houseList = new ArrayList<House>();
+    BankAccount bAcc = new BankAccount();
+    ASBParser asbParser = new ASBParser();
+    Calculator calc = new Calculator();
+    CalendarAccessor calendar = new CalendarAccessor();
+    XMLReadWrite xmlRW = new XMLReadWrite();
+    
+    houseList.add(new House("586B Maunganui Road, Mt Maunganui", "586B Maunganui Road, Mount Maunganui, Tauranga 3116, New Zealand", 3, 400.00, 34.50));
+    houseList.add(new House("128A Fernhill Road, Queenstown", "128A Fernhill Road, Fernhill, Queenstown 9300, New Zealand", 3, 450.00, 0.00));
+    
+    // List of tenants - later versions can store this in an .xml file
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+    Date date = new Date();
+    houseList.get(0).getTenantList().add(new Tenant("Florence Guthrie", "F S A GUTHRIE, J D S", "0123456789", "flo_guthrie@gmail.com", sdf.parse("2014/11/25"), 350.00, 1));
+    houseList.get(0).getTenantList().get(0).setLeaseEnd(sdf.parse("2015/04/17"));
+    houseList.get(0).getTenantList().add(new Tenant("Realty Focus Ltd", "REALTY FOCUS LTD", "01234567890123", "realty_focus@gmail.com", date, 365.50, 2));
+    houseList.get(1).getTenantList().add(new Tenant("Florence Guthrie", "F S A GUTHRIE", "0123456789", "flo_guthrie@gmail.com", date, 450.00, 1));
+    houseList.get(1).getTenantList().add(new Tenant("Hannah Caithness", "CAITHNESS, H W", "01234567890", "hannah_caithness@gmail.com", date, 450.00, 1));
+    houseList.get(1).getTenantList().add(new Tenant("Josh Goodbourn", "Goodbourn J T", "012345678901", "josh_goodbourn@gmail.com", date, 150.00, 1));
+    houseList.get(1).getTenantList().add(new Tenant("James Ronaldson", "RONALDSON J", "0123456789012", "james_ronaldson@gmail.com", date, 150.00, 1));
+    houseList.get(1).getTenantList().add(new Tenant("Steven Anglin", "S S ANGLIN", "01234567890123", "steven_anglin@gmail.com", date, 150.00, 1));
     
     System.out.println("Opening file: " + csv_file);
     try (BufferedReader br = new BufferedReader(new FileReader(csv_file)))
@@ -72,7 +76,7 @@ public class RentTracker {
       BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
       boolean rentPayment = false;
       
-  		for(TransactionRecord tr : bAcc.getTransactionCollection().getTransactionRecords()) {
+  		for(Transaction tr : bAcc.getTransactionCollection().getTransactions()) {
   		  // loop through each transaction record
   		  
   		  rentPayment = false;  // reset rentPayment flag just incase its still true from the previous loop
@@ -101,7 +105,7 @@ public class RentTracker {
               
               // Add to tenant's list of rent payments if payment is a rental payment
               if(rentPayment) {
-                t.getRentPayments().add(tr);
+                t.getTransactionList().add(tr);
               }
             }
           }
@@ -114,7 +118,7 @@ public class RentTracker {
     
     for(House h : houseList) {  // loop through each house & then each tenant 
       for(Tenant t : h.getTenantList()) {
-        for (TransactionRecord tr : t.getRentPayments()) {
+        for (Transaction tr : t.getTransactionList()) {
           System.out.println("----------------------------");
           System.out.println(tr.getDate().toString() + " | " + h.getName() + " : " + t.getName() + " - " + tr.getAmount());
           try {
@@ -127,13 +131,15 @@ public class RentTracker {
       }
     }
 		
-		Date dateFrom = new SimpleDateFormat("yyyy/MM/dd").parse("2014/11/18");
-		Date dateTo = new SimpleDateFormat("yyyy/MM/dd").parse("2015/07/23");
+		Date dateFrom = sdf.parse("2014/11/18");
+		Date dateTo = sdf.parse("2015/07/23");
 		DecimalFormat df = new DecimalFormat("0.00");
 		
 		System.out.println("Income: $" + df.format(calc.getIncome(bAcc, dateFrom, dateTo)));
 		System.out.println("Outgoings: $" + df.format(calc.getOutgoings(bAcc, dateFrom, dateTo)));
 		System.out.println("Total: $" + df.format((calc.getIncome(bAcc, dateFrom, dateTo) + calc.getOutgoings(bAcc, dateFrom, dateTo))));
+		
+		xmlRW.writeTenantsXML(houseList);
 	}
 	
 	/** Checks to see if the payment amount is a multiple of the rent.

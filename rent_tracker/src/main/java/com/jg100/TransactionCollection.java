@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 class TransactionCollection {
-  private ArrayList<TransactionRecord> tRecords;
+  private ArrayList<Transaction> tRecords;
   private Date dateFrom, dateTo;
   
   TransactionCollection() {
@@ -26,21 +26,21 @@ class TransactionCollection {
     return this.dateTo;
   }
   
-  public ArrayList<TransactionRecord> getTransactionRecords() {
+  public ArrayList<Transaction> getTransactions() {
     return this.tRecords;
   }
   
   /**
-   * Returns a copy of the TransactionRecord arraylist containing only the entries between the given dates
+   * Returns a copy of the Transaction arraylist containing only the entries between the given dates
    */
-  public ArrayList<TransactionRecord> getTransactionRecords(Date dateFrom, Date dateTo) throws IllegalArgumentException {
-    ArrayList<TransactionRecord> trOut = new ArrayList<TransactionRecord>();
+  public ArrayList<Transaction> getTransactions(Date dateFrom, Date dateTo) throws IllegalArgumentException {
+    ArrayList<Transaction> trOut = new ArrayList<Transaction>();
     
     if(dateFrom.after(dateTo) || dateFrom.before(this.getDateFrom()) || dateTo.after(this.getDateTo())) {
       throw new IllegalArgumentException("Please check you have entered valid dates; Must be between " + this.getDateFrom() + " and " + this.getDateTo());
     }
     
-    for(TransactionRecord tr : this.tRecords) {
+    for(Transaction tr : this.tRecords) {
       if((tr.getDate().equals(dateFrom) || tr.getDate().after(dateFrom)) && (tr.getDate().equals(dateTo) || tr.getDate().before(dateTo))) {
         trOut.add(tr);
       }

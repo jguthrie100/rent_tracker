@@ -1,13 +1,13 @@
 import java.util.Date;
 
-class TransactionRecord {
-  private String bankAccountID, type, chequeNum, payee, memo;
+class Transaction {
+  private String bankAccountId, type, chequeNum, payee, memo;
   private Date date;
   private int id;
   private Double amount;
   
-  TransactionRecord(String bankAccountID, Date date, int id, String type, String chequeNum, String payee, String memo, Double amount) {
-    this.bankAccountID = bankAccountID;
+  Transaction(String bankAccountId, Date date, int id, String type, String chequeNum, String payee, String memo, Double amount) {
+    this.bankAccountId = bankAccountId;
     this.date = date;
     this.id = id;
     this.type = type;
@@ -17,15 +17,21 @@ class TransactionRecord {
     this.amount = amount;
   }
   
-  public String getBankAccountID() {
-    return this.bankAccountID;
+  public String getBankAccountId() {
+    return this.bankAccountId;
+  }
+  
+  /** FullId is a combination of bank account id and transaction id.
+   *   Ensures id is unique when including transactions from other bank accounts */
+  public String getFullId() {
+    return this.bankAccountId.replace("-", "") + id;
   }
   
   public Date getDate() {
     return this.date;
   }
   
-  public int getID() {
+  public int getId() {
     return this.id;
   }
   
@@ -50,7 +56,7 @@ class TransactionRecord {
   }
   
   public String toString() {
-    return (getDate().toString() + "; ID: " + getID() + "; Type: " + getType()
+    return (getDate().toString() + "; ID: " + getId() + "; Type: " + getType()
             + "; Cheque Num: " + getChequeNum() + "; Payee: " + getPayee() + "; Memo: "
             + getMemo() + "; Amount: " + getAmount());
   }

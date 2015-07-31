@@ -6,16 +6,16 @@ class Tenant {
   private String name, paymentHandle, phoneNum, email;
   private double rentAmount;
   private int rentFrequency;
-  private Date startDate, endDate;   // Date when tenant moved in and moved out
-  private ArrayList<TransactionRecord> rentPayments;
+  private Date leaseStart, leaseEnd;   // Date when tenant moved in and moved out
+  private ArrayList<Transaction> transactionList;
   
-  public Tenant(String name, String paymentHandle, String phoneNum, String email, Date startDate, double rentAmount, int rentFrequency) {
-    rentPayments = new ArrayList<TransactionRecord>();
+  public Tenant(String name, String paymentHandle, String phoneNum, String email, Date leaseStart, double rentAmount, int rentFrequency) {
+    transactionList = new ArrayList<Transaction>();
     this.name = name;
     this.paymentHandle = paymentHandle;
     this.phoneNum = phoneNum;
     this.email = email;
-    this.startDate = startDate;
+    this.leaseStart = leaseStart;
     this.rentAmount = rentAmount;
     this.rentFrequency = rentFrequency;
   }
@@ -53,20 +53,20 @@ class Tenant {
     this.email = email;
   }
   
-  public Date getStartDate() {
-    return this.startDate;
+  public Date getLeaseStart() {
+    return this.leaseStart;
   }
   
-  public void setStartDate(Date startDate) {
-    this.startDate = startDate;
+  public void setLeaseStart(Date leaseStart) {
+    this.leaseStart = leaseStart;
   }
   
-  public Date getEndDate() {
-    return this.endDate;
+  public Date getLeaseEnd() {
+    return this.leaseEnd;
   }
   
-  public void setEndDate(Date endDate) {
-    this.endDate = endDate;
+  public void setLeaseEnd(Date leaseEnd) {
+    this.leaseEnd = leaseEnd;
   }
   
   public double getRentAmount() {
@@ -85,7 +85,7 @@ class Tenant {
     this.rentFrequency = rentFrequency;
   }
   
-  public ArrayList<TransactionRecord> getRentPayments() {
-    return this.rentPayments;
+  public ArrayList<Transaction> getTransactionList() {
+    return this.transactionList;
   }
 }

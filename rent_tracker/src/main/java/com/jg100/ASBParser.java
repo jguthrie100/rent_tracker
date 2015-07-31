@@ -89,8 +89,8 @@ class ASBParser implements StatementParser {
       if(m.find()) {
          
         // Add transaction record to the transaction collection
-        bAcc.getTransactionCollection().getTransactionRecords().add(
-          new TransactionRecord(bAcc.getAccountID(), new SimpleDateFormat("yyyy/MM/dd").parse(m.group(1)), Integer.parseInt(m.group(2)), m.group(3), m.group(4), m.group(5), m.group(6), Double.parseDouble(m.group(7)))
+        bAcc.getTransactionCollection().getTransactions().add(
+          new Transaction(bAcc.getAccountID(), new SimpleDateFormat("yyyy/MM/dd").parse(m.group(1)), Integer.parseInt(m.group(2)), m.group(3), m.group(4), m.group(5), m.group(6), Double.parseDouble(m.group(7)))
         );
       } else {
         throw new ParseException("Unable to parse line " + lineNum + ": " + lineText, 0);

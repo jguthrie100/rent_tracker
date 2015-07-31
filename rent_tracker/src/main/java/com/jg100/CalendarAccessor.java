@@ -60,9 +60,9 @@ class CalendarAccessor {
   }
   
   /** Parses relevant data from a TransactionRecord and adds it to the calendar */
-  public String addRentPayment(String house, String tenant, TransactionRecord tr) throws IOException {
+  public String addRentPayment(String house, String tenant, Transaction tr) throws IOException {
     
-    String id = (house.substring(0, 10) + tenant.substring(0, 10) + tr.getBankAccountID() + tr.getID()).toLowerCase().replaceAll("[w-z\\W]", "");
+    String id = (house.substring(0, 10) + tenant.substring(0, 10) + tr.getBankAccountId() + tr.getId()).toLowerCase().replaceAll("[w-z\\W]", "");
     
     DecimalFormat df = new DecimalFormat("0.00");
     String title = "$" + df.format(tr.getAmount()) + " - " + tenant;

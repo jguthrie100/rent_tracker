@@ -20,7 +20,7 @@ class Calculator {
     double income = 0.0;
     
     try {
-      for(TransactionRecord tr : bAcc.getTransactionCollection().getTransactionRecords(dateFrom, dateTo)) {
+      for(Transaction tr : bAcc.getTransactionCollection().getTransactions(dateFrom, dateTo)) {
         if(tr.getAmount() > 0.0) {
           income += tr.getAmount();
         }
@@ -36,7 +36,7 @@ class Calculator {
     double outgoings = 0.0;
     
     try {
-      for(TransactionRecord tr : bAcc.getTransactionCollection().getTransactionRecords(dateFrom, dateTo)) {
+      for(Transaction tr : bAcc.getTransactionCollection().getTransactions(dateFrom, dateTo)) {
         if(tr.getAmount() < 0.0) {
           outgoings += tr.getAmount();
         }

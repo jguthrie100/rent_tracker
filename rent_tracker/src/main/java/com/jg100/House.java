@@ -2,14 +2,14 @@ import java.util.ArrayList;
 
 class House {
   private String name, address;
-  private int numRooms;
+  private int numBedrooms;
   private double rent, agencyFees;
   private ArrayList<Tenant> tenantList;
   
-  House(String name, String address, int numRooms, double rent, double agencyFees) {
+  House(String name, String address, int numBedrooms, double rent, double agencyFees) {
     this.name = name;
     this.address = address;
-    this.numRooms = numRooms;
+    this.numBedrooms = numBedrooms;
     this.rent = rent;
     this.agencyFees = agencyFees;
     
@@ -24,12 +24,12 @@ class House {
     return this.address;
   }
   
-  public int getNumRooms() {
-    return this.numRooms;
+  public int getNumBedrooms() {
+    return this.numBedrooms;
   }
   
-  public void setNumRooms(int numRooms) {
-    this.numRooms = numRooms;
+  public void setNumBedrooms(int numBedrooms) {
+    this.numBedrooms = numBedrooms;
   }
   
   public double getRent() {
@@ -48,8 +48,8 @@ class House {
     this.agencyFees = agencyFees;
   }
   
-  public double getRentPerRoom() {
-    return (this.rent/this.numRooms);
+  public double getRentPerBedroom() {
+    return (this.rent/this.numBedrooms);
   }
   
   public ArrayList<Tenant> getTenantList() {
