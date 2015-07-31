@@ -5,9 +5,8 @@ class TransactionRecord {
   private Date date;
   private int id;
   private Double amount;
-  private boolean isRent;
   
-  TransactionRecord(String bankAccountID, Date date, int id, String type, String chequeNum, String payee, String memo, Double amount, boolean isRent) {
+  TransactionRecord(String bankAccountID, Date date, int id, String type, String chequeNum, String payee, String memo, Double amount) {
     this.bankAccountID = bankAccountID;
     this.date = date;
     this.id = id;
@@ -16,7 +15,6 @@ class TransactionRecord {
     this.payee = payee;
     this.memo = memo;
     this.amount = amount;
-    this.isRent = isRent;
   }
   
   public String getBankAccountID() {
@@ -51,13 +49,9 @@ class TransactionRecord {
     return this.amount;
   }
   
-  public boolean isRent() {
-    return this.isRent;
-  }
-  
   public String toString() {
     return (getDate().toString() + "; ID: " + getID() + "; Type: " + getType()
             + "; Cheque Num: " + getChequeNum() + "; Payee: " + getPayee() + "; Memo: "
-            + getMemo() + "; Amount: " + getAmount() + "; Is rent? : " + isRent());
+            + getMemo() + "; Amount: " + getAmount());
   }
 }

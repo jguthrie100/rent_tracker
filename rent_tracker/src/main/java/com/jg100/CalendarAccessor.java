@@ -11,11 +11,13 @@ import com.google.api.services.calendar.model.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
+import java.text.DecimalFormat;
 
 class CalendarAccessor {
   
   private static final String APP_NAME = "Rental Income Tracker";
+  
+  private static final String CALENDAR_ID = "reet2ukgvv42vmjkprqdhsg3v8@group.calendar.google.com";
   
   /** Global instance of the JSON factory. */
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
@@ -58,34 +60,29 @@ class CalendarAccessor {
   }
   
   /** Parses relevant data from a TransactionRecord and adds it to the calendar */
-  public String addTransaction(TransactionRecord tRecord) {
+  public String addRentPayment(String house, String tenant, TransactionRecord tr) throws IOException {
     
-    String idPrefix = APP_NAME.toLowerCase().replace(" ", "").replaceAll("[w-z]", "x");
-    String id = idPrefix + tRecord.getBankAccountID().replace("-", "") + tRecord.getID();
+    String id = (house.substring(0, 10) + tenant.substring(0, 10) + tr.getBankAccountID() + tr.getID()).toLowerCase().replaceAll("[w-z\\W]", "");
     
-    /* Needs more sophisticated way of deciding what should go in the title 
-     *  Sometimes the name of the person is in the memo and not the payee section for eg,
-     *  so things like that need accounting for. 
-     */
+    DecimalFormat df = new DecimalFormat("0.00");
+    String title = "$" + df.format(tr.getAmount()) + " - " + tenant;
     
-    // If transaction amount is less than 0, put - sign infront of $
-    String title = "";
-    if(tRecord.getAmount() < 0) {
-      title = "-";
-    }
-    
-    // Format event title. i.e. "$350 - F S A GUTHRIE (rent)"
-    title += "$" + Math.abs(tRecord.getAmount()) + " - " + tRecord.getPayee();
-    if(tRecord.isRent()) {
-      title += " (rent)";
-    }
-    
-    title = title.replaceAll("D/C FROM ", "");
-    
-    String description = title + System.lineSeparator();
-    description += tRecord.getPayee() + System.lineSeparator();
-    description += tRecord.getMemo() + System.lineSeparator();
+    String description = house + System.lineSeparator();
+    description += title + System.lineSeparator();
+    description += tr.getPayee() + System.lineSeparator();
+    description += tr.getMemo() + System.lineSeparator();
     description += System.lineSeparator() + "id: " + id;
+    
+    String eventColor = "";
+    
+    switch(house) {
+      case "586B Maunganui Road, Mt Maunganui": eventColor = "5";
+                                                break;
+      case "128A Fernhill Road, Queenstown":    eventColor = "9";
+                                                break;
+      default:  eventColor = "10";
+                break;
+    }
     
     System.out.println("------------------------------------");
     System.out.println("   " + title + "    ");
@@ -94,7 +91,22 @@ class CalendarAccessor {
     
     Event event = new Event()
     .setSummary(title)
-    .setDescription(description);
+    .setDescription(description)
+    .setLocation(house)
+    .setId(id)
+    .setColorId(eventColor);
+    
+    DateTime startDateTime = new DateTime(tr.getDate());
+    EventDateTime start = new EventDateTime()
+    .setDateTime(startDateTime);
+    event.setStart(start);
+
+    DateTime endDateTime = new DateTime(tr.getDate());
+    EventDateTime end = new EventDateTime()
+    .setDateTime(endDateTime);
+    event.setEnd(end);
+    
+    event = service.events().insert(CALENDAR_ID, event).execute();
     
     /** return event id that the event is saved under in the calendar */
     return id;

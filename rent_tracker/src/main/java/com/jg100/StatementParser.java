@@ -1,4 +1,5 @@
 import java.text.ParseException;
+import java.util.ArrayList;
 
 /**
  * Specifies a set of methods that are required to parse bank account statements.

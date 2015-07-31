@@ -87,13 +87,10 @@ class ASBParser implements StatementParser {
       Pattern p = Pattern.compile("^(.*),(.*),(.*),(.*),\"(.*)\",\"(.*)\",(.*)$");
       Matcher m = p.matcher(lineText);
       if(m.find()) {
-        
-        /*
-         * Add code that works out if transaction is a rental payment or not 
-         */
          
+        // Add transaction record to the transaction collection
         bAcc.getTransactionCollection().getTransactionRecords().add(
-          new TransactionRecord(bAcc.getAccountID(), new SimpleDateFormat("yyyy/MM/dd").parse(m.group(1)), Integer.parseInt(m.group(2)), m.group(3), m.group(4), m.group(5), m.group(6), Double.parseDouble(m.group(7)), false)
+          new TransactionRecord(bAcc.getAccountID(), new SimpleDateFormat("yyyy/MM/dd").parse(m.group(1)), Integer.parseInt(m.group(2)), m.group(3), m.group(4), m.group(5), m.group(6), Double.parseDouble(m.group(7)))
         );
       } else {
         throw new ParseException("Unable to parse line " + lineNum + ": " + lineText, 0);
