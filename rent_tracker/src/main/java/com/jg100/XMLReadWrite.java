@@ -23,6 +23,8 @@ class XMLReadWrite {
   
   private static Transformer transformer;
   
+  private static String xmlFile = "/home/jg100/.config/tenants.xml";
+  
   public XMLReadWrite() {
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -40,6 +42,10 @@ class XMLReadWrite {
   }
   
   public void writeTenantsXML(ArrayList<House> houseList) {
+    writeTenantsXML(houseList, xmlFile);
+  }
+  
+  public void writeTenantsXML(ArrayList<House> houseList, String outputXMLFile) {
     
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
     DecimalFormat df = new DecimalFormat("0.00");
@@ -49,6 +55,7 @@ class XMLReadWrite {
     Element level0 = doc.createElement("houseList");
 		doc.appendChild(level0);
 		
+		// build House elements
     for(House h : houseList) {
 		  Element level1 = doc.createElement("house");
 		  level0.appendChild(level1);
@@ -75,6 +82,7 @@ class XMLReadWrite {
 		  
 		  level2 = doc.createElement("tenantList");
 		  
+		  // build Tenant elements
       for(Tenant t : h.getTenantList()) {
         
         Element level3 = doc.createElement("tenant");
@@ -100,6 +108,8 @@ class XMLReadWrite {
 		    level4.appendChild(doc.createTextNode(sdf.format(t.getLeaseStart())));
 		    level3.appendChild(level4);
 		    
+		    // Need to catch null return, just incase the leaseEnd date hasn't been set 
+		    //  - it crashes the DOM parser if we don't handle it
 		    level4 = doc.createElement("leaseEnd");
 		    if(t.getLeaseEnd() != null) {
 		      level4.appendChild(doc.createTextNode(sdf.format(t.getLeaseEnd())));
@@ -118,10 +128,15 @@ class XMLReadWrite {
 		    
 		    level4 = doc.createElement("transactionList");
 		
+		    // build Transaction elements
         for (Transaction tr : t.getTransactionList()) {
           
-          Element level5 = doc.createElement("transaction_id");
-          level5.appendChild(doc.createTextNode("" + tr.getFullId()));
+          Element level5 = doc.createElement("transaction");
+          
+          // set attribute to transaction id
+		      Attr attr = doc.createAttribute("id");
+		      attr.setValue("" + tr.getFullId());
+		      level5.setAttributeNode(attr);
   		    level4.appendChild(level5);
           
         }
@@ -132,7 +147,7 @@ class XMLReadWrite {
   
     // write the content into xml file
   	DOMSource source = new DOMSource(doc);
-  	StreamResult result = new StreamResult(new File("/home/jg100/.config/tenants.xml"));
+  	StreamResult result = new StreamResult(new File(outputXMLFile));
   //	StreamResult result = new StreamResult(System.out); // testing to System.out
   	
   	try {
