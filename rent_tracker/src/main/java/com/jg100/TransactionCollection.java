@@ -41,7 +41,7 @@ class TransactionCollection {
     }
     
     for(Transaction tr : this.tRecords) {
-      if((tr.getDate().equals(dateFrom) || tr.getDate().after(dateFrom)) && (tr.getDate().equals(dateTo) || tr.getDate().before(dateTo))) {
+      if(!tr.getDate().before(dateFrom) && !tr.getDate().after(dateTo)) {
         trOut.add(tr);
       }
     }
