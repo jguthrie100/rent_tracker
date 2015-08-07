@@ -36,14 +36,15 @@ public class RentTracker {
     Date date = new Date();
     houseList.get(0).getTenantList().add(new Tenant("Florence Guthrie", "F S A GUTHRIE, J D S", "0123456789", "flo_guthrie@gmail.com", sdf.parse("2014/11/25"), 350.00, 1));
     houseList.get(0).getTenantList().get(0).setLeaseEnd(sdf.parse("2015/04/17"));
-    houseList.get(0).getTenantList().add(new Tenant("Realty Focus Ltd", "REALTY FOCUS LTD", "01234567890123", "realty_focus@gmail.com", date, 365.50, 2));
+    houseList.get(0).getTenantList().add(new Tenant("Realty Focus Ltd", "REALTY FOCUS LTD", "01234567890123", "realty_focus@gmail.com", sdf.parse("2015/04/15"), 365.50, 2));
     houseList.get(1).getTenantList().add(new Tenant("Florence Guthrie", "F S A GUTHRIE", "0123456789", "flo_guthrie@gmail.com", date, 450.00, 1));
     houseList.get(1).getTenantList().add(new Tenant("Hannah Caithness", "CAITHNESS, H W", "01234567890", "hannah_caithness@gmail.com", date, 450.00, 1));
     houseList.get(1).getTenantList().add(new Tenant("Josh Goodbourn", "Goodbourn J T", "012345678901", "josh_goodbourn@gmail.com", date, 150.00, 1));
     houseList.get(1).getTenantList().add(new Tenant("James Ronaldson", "RONALDSON J", "0123456789012", "james_ronaldson@gmail.com", date, 150.00, 1));
     houseList.get(1).getTenantList().add(new Tenant("Steven Anglin", "S S ANGLIN", "01234567890123", "steven_anglin@gmail.com", date, 150.00, 1));
     
-    System.out.println("Opening file: " + csv_file);
+    /** Read and parse CSV file containing bank transactions */
+    System.out.println("Opening CSV file: " + csv_file);
     try (BufferedReader br = new BufferedReader(new FileReader(csv_file)))
 		{
 			String sCurrentLine;
@@ -51,9 +52,13 @@ public class RentTracker {
  
 			while ((sCurrentLine = br.readLine()) != null) {
   			try {
+  			  // Pass line of CSV text to the parser
           asbParser.parseLine(bAcc, counter, sCurrentLine);
-        } catch(ParseException e) {
-          e.printStackTrace();
+        } catch (ParseException e) {
+          System.out.println(e.toString());
+          System.out.println(" ---> Please correct the input CSV file so that it matches the expected pattern");
+          System.out.println(" ---> Exiting...");
+          System.exit(0);
         }
         counter++;
 			}
@@ -116,6 +121,7 @@ public class RentTracker {
       e.printStackTrace();
     }
     
+    /** This loop adds every payment of each tenant to the calendar */
     for(House h : houseList) {  // loop through each house & then each tenant 
       for(Tenant t : h.getTenantList()) {
         for (Transaction tr : t.getTransactionList()) {
@@ -131,13 +137,11 @@ public class RentTracker {
       }
     }
 		
-		Date dateFrom = sdf.parse("2014/11/18");
-		Date dateTo = sdf.parse("2015/07/23");
-		DecimalFormat df = new DecimalFormat("0.00");
+		Date d1 = sdf.parse("2015/04/15");
+		Date d2 = sdf.parse("2015/04/30");
 		
-		System.out.println("Income: $" + df.format(calc.getIncome(bAcc, dateFrom, dateTo)));
-		System.out.println("Outgoings: $" + df.format(calc.getOutgoings(bAcc, dateFrom, dateTo)));
-		System.out.println("Total: $" + df.format((calc.getIncome(bAcc, dateFrom, dateTo) + calc.getOutgoings(bAcc, dateFrom, dateTo))));
+		System.out.println("Total rent paid by Flo: " + houseList.get(0).getTenantList().get(1).getTotalRentPaid(d1, d2));
+		System.out.println("Total rent expected by Flo: " + houseList.get(0).getTenantList().get(1).getTotalRentExpected(d1, d2));
 		
 		xmlRW.writeTenantsXML(houseList);
 	}
