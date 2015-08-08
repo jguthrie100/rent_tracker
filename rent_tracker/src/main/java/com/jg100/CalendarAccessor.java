@@ -1,6 +1,7 @@
 package com.jg100;
+
 import com.jg100.model.*;
-import com.jg100.parsers.*;
+
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;

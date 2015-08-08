@@ -1,6 +1,6 @@
 package com.jg100.parsers;
+
 import com.jg100.model.*;
-import com.jg100.parsers.*;
 
 import java.text.ParseException;
 import java.util.ArrayList;

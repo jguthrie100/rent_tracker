@@ -1,6 +1,4 @@
 package com.jg100.model;
-import com.jg100.model.*;
-import com.jg100.parsers.*;
 
 /**
  * Class that models a bank account.

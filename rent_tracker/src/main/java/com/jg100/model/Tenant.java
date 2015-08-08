@@ -1,6 +1,4 @@
 package com.jg100.model;
-import com.jg100.model.*;
-import com.jg100.parsers.*;
 
 import org.joda.time.*;
 import java.util.ArrayList;
