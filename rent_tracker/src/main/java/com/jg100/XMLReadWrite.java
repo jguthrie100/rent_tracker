@@ -167,7 +167,7 @@ class XMLReadWrite {
 		    level3.appendChild(level4);
 		    
 		    level4 = doc.createElement("rentAmount");
-		    level4.appendChild(doc.createTextNode(df.format(t.getRentAmount())));
+		    level4.appendChild(doc.createTextNode(df.format(t.getWeeklyRent())));
 		    level3.appendChild(level4);
 		    
 		    level4 = doc.createElement("rentFrequency");

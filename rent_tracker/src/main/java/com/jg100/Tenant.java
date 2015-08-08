@@ -10,7 +10,7 @@ import java.util.Date;
  */
 class Tenant {
   private String name, paymentHandle, phoneNum, email;
-  private double rentAmount;
+  private double weeklyRent;
   private int rentFrequency;
   private Date leaseStart, leaseEnd;   // Date when tenant moved in and moved out
   private ArrayList<Transaction> transactionList;
@@ -19,22 +19,22 @@ class Tenant {
    * Constructor for Tenant object 
    *  - No null/blank entries are allowed
    * 
-   * @param name            Name of the tenant 
-   * @param paymentHandle   Unique string identifier to identify a tenant's payments in the CSV file
-   * @param phoneNum        Tenant's phone number 
-   * @param email           Tenant's email 
-   * @param leaseStart      Date on which the tenant moved in / started to rent the house
-   * @param rentAmount      Weekly rent amount to be paid by tenant 
-   * @param rentFrequency   How often (in weeks) the tenant pays rent. 1 means once a week, 2 means once every two weeks, etc
+   * @param name           Name of the tenant 
+   * @param paymentHandle  Unique string identifier to identify a tenant's payments in the CSV file
+   * @param phoneNum       Tenant's phone number 
+   * @param email          Tenant's email 
+   * @param leaseStart     Date on which the tenant moved in / started to rent the house
+   * @param weeklyRent     Weekly rent amount to be paid by tenant 
+   * @param rentFrequency  How often (in weeks) the tenant pays rent. 1 means once a week, 2 means once every two weeks, etc
    */
-  public Tenant(String name, String paymentHandle, String phoneNum, String email, Date leaseStart, double rentAmount, int rentFrequency) {
+  public Tenant(String name, String paymentHandle, String phoneNum, String email, Date leaseStart, double weeklyRent, int rentFrequency) {
     /* Use setter methods to improve exception handling */
     setName(name);
     setPaymentHandle(paymentHandle);
     setPhoneNum(phoneNum);
     setEmail(email);
     setLeaseStart(leaseStart);
-    setRentAmount(rentAmount);
+    setWeeklyRent(weeklyRent);
     setRentFrequency(rentFrequency);
     
     transactionList = new ArrayList<Transaction>();
@@ -114,15 +114,15 @@ class Tenant {
     this.leaseEnd = leaseEnd;
   }
   
-  public double getRentAmount() {
-    return this.rentAmount;
+  public double getWeeklyRent() {
+    return this.weeklyRent;
   }
   
-  public void setRentAmount(double rentAmount) {
-    if(rentAmount < 0.0) {
+  public void setWeeklyRent(double weeklyRent) {
+    if(weeklyRent < 0.0) {
       throw new IllegalArgumentException("Error: Rent amount must be greater than or equal to 0.0");
     }
-    this.rentAmount = rentAmount;
+    this.weeklyRent = weeklyRent;
   }
   
   public int getRentFrequency() {
@@ -206,7 +206,7 @@ class Tenant {
     int days = Days.daysBetween(new DateTime(dateFrom), new DateTime(dateTo)).getDays();
     
     System.out.println("days: " + days);
-    return (days * this.rentAmount / 7);
+    return (days * this.weeklyRent / 7);
   }
   
   /**

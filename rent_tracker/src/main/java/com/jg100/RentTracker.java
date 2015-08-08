@@ -1,3 +1,5 @@
+
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.FileReader;
@@ -101,7 +103,7 @@ public class RentTracker {
             if((tr.getPayee().contains(t.getPaymentHandle()) || tr.getMemo().contains(t.getPaymentHandle())) && !rentPayment) {
               // if tenant's 'payment handle' matches transaction payee or memo fields, then we know the payment was made by this tenant
               
-              if(rentMultiple(tr.getAmount(), t.getWeeklyRentAmount(), 4)) {
+              if(rentMultiple(tr.getAmount(), t.getWeeklyRent(), 4)) {
                 // if transaction amount matches expected rent (or a multiple of), we can automatically flag the transaction as being a rental payment
                 rentPayment = true;
                 
@@ -167,7 +169,7 @@ public class RentTracker {
 	private static boolean rentMultiple(double payment, double weeklyRent, int maxMultiple) {
 	  for(int i = 1; i <= maxMultiple; i++) {
 //	    System.out.println("Amount: " + amount + "; Rent: " + rent + " = " + (amount / rent));
-	    if(amount / rent == i) {
+	    if(payment / weeklyRent == i) {
 	      return true;
 	    }
 	  }
