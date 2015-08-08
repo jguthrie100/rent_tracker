@@ -46,6 +46,12 @@ class XMLReadWrite {
   }
   
   public void writeTenantsXML(ArrayList<House> houseList, String outputXMLFile) {
+    if(houseList == null) {
+      throw new IllegalArgumentException("Error: houseList arrayList == null");
+    }
+    if(outputXMLFile == null || outputXMLFile.isEmpty()) {
+      throw new IllegalArgumentException("Error: Output XML filename cannot be null or empty");
+    }
     
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
     DecimalFormat df = new DecimalFormat("0.00");
@@ -151,7 +157,9 @@ class XMLReadWrite {
   //	StreamResult result = new StreamResult(System.out); // testing to System.out
   	
   	try {
+  	  System.out.println("Writing XML representation of houses and tenants to '" + outputXMLFile + "'...");
   	  transformer.transform(source, result);
+  	  System.out.println("...successfully wrote to '" + outputXMLFile + "'");
   	} catch (TransformerException tfe) {
   	  tfe.printStackTrace();
     }
