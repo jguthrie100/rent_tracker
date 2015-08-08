@@ -1,9 +1,13 @@
-import java.lang.IllegalArgumentException;
 import org.joda.time.*;
 import java.util.ArrayList;
 import java.util.Date;
 
-/** Tenant object to model each of the tenants */
+/**
+ * Tenant class to model each tenant 
+ * 
+ * Each Tenant has information relating to their personal information (phone, email, rent amount etc),
+ *  as well as a list of transactions/payments that they have made into the bank account
+ */
 class Tenant {
   private String name, paymentHandle, phoneNum, email;
   private double rentAmount;
@@ -11,15 +15,29 @@ class Tenant {
   private Date leaseStart, leaseEnd;   // Date when tenant moved in and moved out
   private ArrayList<Transaction> transactionList;
   
+  /**
+   * Constructor for Tenant object 
+   *  - No null/blank entries are allowed
+   * 
+   * @param name            Name of the tenant 
+   * @param paymentHandle   Unique string identifier to identify a tenant's payments in the CSV file
+   * @param phoneNum        Tenant's phone number 
+   * @param email           Tenant's email 
+   * @param leaseStart      Date on which the tenant moved in / started to rent the house
+   * @param rentAmount      Weekly rent amount to be paid by tenant 
+   * @param rentFrequency   How often (in weeks) the tenant pays rent. 1 means once a week, 2 means once every two weeks, etc
+   */
   public Tenant(String name, String paymentHandle, String phoneNum, String email, Date leaseStart, double rentAmount, int rentFrequency) {
+    /* Use setter methods to improve exception handling */
+    setName(name);
+    setPaymentHandle(paymentHandle);
+    setPhoneNum(phoneNum);
+    setEmail(email);
+    setLeaseStart(leaseStart);
+    setRentAmount(rentAmount);
+    setRentFrequency(rentFrequency);
+    
     transactionList = new ArrayList<Transaction>();
-    this.name = name;
-    this.paymentHandle = paymentHandle;
-    this.phoneNum = phoneNum;
-    this.email = email;
-    this.leaseStart = leaseStart;
-    this.rentAmount = rentAmount;
-    this.rentFrequency = rentFrequency;
   }
   
   public String getName() {
@@ -123,10 +141,22 @@ class Tenant {
     this.rentFrequency = rentFrequency;
   }
   
+  /**
+   * Return the total amount of rent that the tenant has paid (from when their lease started) up until today's date
+   * 
+   * @return  Double value referring to the amount of rent the tenant has paid
+   */
   public double getTotalRentPaid() {
     return getTotalRentPaid(this.leaseStart, new Date());
   }
   
+  /**
+   * Returns out the total amount of rent paid by the tenant between two dates
+   * 
+   * @param dateFrom  Date from which the rent calculation should start 
+   * @param dateTo    Date to which the rent calculation should go until
+   * @return          The amount of rent that the tenant has paid between (and including) the two dates
+   */
   public double getTotalRentPaid(Date dateFrom, Date dateTo) {
     if(dateFrom == null || dateTo == null) {
       throw new IllegalArgumentException("Error: dates cannot be passed as null values");
@@ -145,6 +175,12 @@ class Tenant {
     return rentPaid;
   }
   
+  /**
+   * Returns the total amount of rent that the tenant should have paid to date 
+   * Calculation starts from when the tenant's lease started and runs until either today's date, or the date on which their lease ended
+   * 
+   * @return Double value relating to the amount of rent that the tenant should have paid to date
+   */
   public double getTotalRentExpected() {
     Date dateTo = new Date();
     if(this.leaseEnd != null) {
@@ -153,6 +189,13 @@ class Tenant {
     return getTotalRentExpected(this.leaseStart, dateTo);
   }
   
+  /**
+   * Returns the total amount of rent that the tenant should have paid between two dates
+   * 
+   * @param dateFrom  Date from which the rent calculation should start 
+   * @param dateTo    Date to which the rent calculation should go until 
+   * @return          Double value specifying the amount of rent the tenant should have paid between (and including) the two passed dates 
+   */
   public double getTotalRentExpected(Date dateFrom, Date dateTo) {
     if(dateFrom == null || dateTo == null) {
       throw new IllegalArgumentException("Error: dates cannot be passed as null values");
@@ -166,6 +209,12 @@ class Tenant {
     return (days * this.rentAmount / 7);
   }
   
+  /**
+   * Returns ArrayList of Transaction objects (i.e. payments that the tenant has made)
+   *  - Returned ArrayList can have new transactions appended to it/deleted from it using standard ArrayList methods
+   * 
+   * @return  ArrayList containing Transaction objects relating to this tenant
+   */
   public ArrayList<Transaction> getTransactionList() {
     return this.transactionList;
   }

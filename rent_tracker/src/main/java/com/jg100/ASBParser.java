@@ -1,4 +1,3 @@
-import java.lang.IllegalArgumentException;
 import java.text.ParseException;
 import java.util.regex.*;
 import java.util.Date;
@@ -6,6 +5,9 @@ import java.text.SimpleDateFormat;
 
 /**
  * ASBParser is a parser written specifically for CSV files downloaded from the ASB bank online banking site 
+ * 
+ * Its used to basically convert banking payments that are provided in CSV format, to a format that can be used in the program,
+ *  which essentially means populating the data into Transaction objects
  */
 class ASBParser implements StatementParser {
   public ASBParser() {
@@ -23,9 +25,11 @@ class ASBParser implements StatementParser {
    * 
    * Line 4 is different yet again, as is Line 5 etc etc 
    * 
-   * @param bAcc BankAccount object that refers to the list of transactions that is being parsed 
-   * @param lineNum Integer that refers to the current line of the CSV file which is being parsed
-   * @param lineText String containing the line of text that is to be parsed 
+   * @param bAcc      BankAccount object that refers to the list of transactions that is being parsed 
+   * @param lineNum   Integer that refers to the current line of the CSV file which is being parsed
+   * @param lineText  String containing the line of text that is to be parsed 
+   * 
+   * @return          BankAccount object updated with the parsed information
    */
   public BankAccount parseLine(BankAccount bAcc, int lineNum, String lineText) throws ParseException {
     if(bAcc == null) {
@@ -52,7 +56,7 @@ class ASBParser implements StatementParser {
     }
     
     /*
-    Line 3: Get date that records start from using regex
+    Line 3: Get date that CSV records start from using regex
     */
     if(lineNum == 3) {
       Pattern p = Pattern.compile("^From date (\\d{4}[0-1]\\d[0-3]\\d)$");
@@ -65,7 +69,7 @@ class ASBParser implements StatementParser {
     }
     
     /*
-    Line 4: Get date that records end at using regex
+    Line 4: Get date that CSV records end at using regex
     */
     if(lineNum == 4) {
       Pattern p = Pattern.compile("^To date (\\d{4}[0-1]\\d[0-3]\\d)$");

@@ -8,8 +8,16 @@ import java.text.SimpleDateFormat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+/**
+ * Main class that runs the whole program
+ */
 public class RentTracker {
   
+  /**
+   * Main program method 
+   * 
+   * @param args  Takes 1 argument - String containing internet banking CSV file 
+   */
   public static void main(String[] args) throws Exception {
     String csv_file = "";
     
@@ -56,6 +64,7 @@ public class RentTracker {
   			  // Pass line of CSV text to the parser
           asbParser.parseLine(bAcc, counter, sCurrentLine);
         } catch (ParseException e) {
+          // Exit program if CSV file doesn't parse properly
           System.out.println(e.toString());
           System.out.println(" ---> Please correct the input CSV file so that it matches the expected pattern");
           System.out.println(" ---> Exiting...");
@@ -69,7 +78,7 @@ public class RentTracker {
 			e.printStackTrace();
 		}
 		
-		/** The idea here is to loop through all the transaction records and determine whether or not each one 
+		/*  The idea here is to loop through all the transaction records and determine whether or not each one 
 		 *   matches up to a tenant. 
 		 *  
 		 *  In order to do this, we need to loop through each tenant and see if the transaction details match
@@ -92,7 +101,7 @@ public class RentTracker {
             if((tr.getPayee().contains(t.getPaymentHandle()) || tr.getMemo().contains(t.getPaymentHandle())) && !rentPayment) {
               // if tenant's 'payment handle' matches transaction payee or memo fields, then we know the payment was made by this tenant
               
-              if(rentMultiple(tr.getAmount(), t.getRentAmount(), 4)) {
+              if(rentMultiple(tr.getAmount(), t.getWeeklyRentAmount(), 4)) {
                 // if transaction amount matches expected rent (or a multiple of), we can automatically flag the transaction as being a rental payment
                 rentPayment = true;
                 
@@ -129,7 +138,7 @@ public class RentTracker {
           System.out.println("----------------------------");
           System.out.println(tr.getDate().toString() + " | " + h.getName() + " : " + t.getName() + " - " + tr.getAmount());
           try {
-            calendar.addRentPayment(h.getName(), t.getName(), tr);
+         //   calendar.addRentPayment(h.getName(), t.getName(), tr);
           } catch (Exception e) {
             System.out.println("Failed to update Calendar. The rent payment may already be saved from a previous session");
           }
@@ -149,8 +158,13 @@ public class RentTracker {
 	
 	/** Checks to see if the payment amount is a multiple of the rent.
 	 *   i.e. if the payment is 750 and the rent is 250, then the payment is 3 lots of rent
+	 * 
+	 * @param payment     rent payment we are checking
+	 * @param weeklyRent  Tenant's weekly rent amount
+	 * @param maxMultiple Max amount that the payment can be compared to weekly rent. i.e. if maxMultiple is 3,
+	 *                      then payment 3 times bigger than weekly rent amount will match, but payment 4 times bigger won't
 	 */
-	private static boolean rentMultiple(double amount, double rent, int maxMultiple) {
+	private static boolean rentMultiple(double payment, double weeklyRent, int maxMultiple) {
 	  for(int i = 1; i <= maxMultiple; i++) {
 //	    System.out.println("Amount: " + amount + "; Rent: " + rent + " = " + (amount / rent));
 	    if(amount / rent == i) {

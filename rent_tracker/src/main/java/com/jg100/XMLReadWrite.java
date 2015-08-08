@@ -16,15 +16,22 @@ import javax.xml.transform.OutputKeys;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
- 
+
+/** XMLReadWrite reads and writes various pieces of information (relating to tenants, houses, transactions etc) from/to XML files
+ *  Essentialy acts as a sort of database handler, wherein information is transferred from XML files to the program
+ */
 class XMLReadWrite {
   
   private static DocumentBuilder docBuilder;
   
   private static Transformer transformer;
   
+  /* Default xml file to read from/write to */
   private static String xmlFile = "/home/jg100/.config/tenants.xml";
   
+  /**
+   * XMLReadWrite constructor - Initiates the core XML read/write structures and objects so that they can be used in later methods
+   */
   public XMLReadWrite() {
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -41,10 +48,23 @@ class XMLReadWrite {
 	  }
   }
   
+  /**
+   * Writes the list of houses/tenants/transactions to the default XML file 
+   * Essentially stores an XML database of all the tenants and houses and rent payments
+   * 
+   * @param houseList   ArrayList of House objects that are to be sorted and saved in XML format
+   */
   public void writeTenantsXML(ArrayList<House> houseList) {
     writeTenantsXML(houseList, xmlFile);
   }
   
+  /**
+   * Writes the list of houses/tenants/transactions to the specified file
+   * Essentially stores an XML database of all the tenants and houses and rent payments
+   * 
+   * @param houseList       ArrayList of House objects that are to be sorted and saved in XML format 
+   * @param outputXMLFile   Filename of the file that the XML should be saved to (can be a new file)
+   */
   public void writeTenantsXML(ArrayList<House> houseList, String outputXMLFile) {
     if(houseList == null) {
       throw new IllegalArgumentException("Error: houseList arrayList == null");
@@ -52,6 +72,28 @@ class XMLReadWrite {
     if(outputXMLFile == null || outputXMLFile.isEmpty()) {
       throw new IllegalArgumentException("Error: Output XML filename cannot be null or empty");
     }
+    
+    /*
+    XML format is:
+    <houseList>
+      <house>
+        <name>xx</name>
+        <address>xx</address>
+        <...>xx</...>
+        <tenantList>
+          <tenant>
+            <name>xx</name>
+            <paymentHandle>xx</paymentHandle>
+            <...>xx</...>
+            <transactionList>
+              <transaction id="xx"/>
+              <transaction id="xx"/>
+            </transactionList>
+          </tenant>
+        </tenantList>
+      </house>
+    </houseList>
+    */
     
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
     DecimalFormat df = new DecimalFormat("0.00");
@@ -61,7 +103,7 @@ class XMLReadWrite {
     Element level0 = doc.createElement("houseList");
 		doc.appendChild(level0);
 		
-		// build House elements
+		// build House elements (i.e. Houses in the list of Houses)
     for(House h : houseList) {
 		  Element level1 = doc.createElement("house");
 		  level0.appendChild(level1);
@@ -79,7 +121,7 @@ class XMLReadWrite {
 		  level1.appendChild(level2);
 		  
 		  level2 = doc.createElement("rent");
-		  level2.appendChild(doc.createTextNode(df.format(h.getRent())));
+		  level2.appendChild(doc.createTextNode(df.format(h.getWeeklyRent())));
 		  level1.appendChild(level2);
 		  
 		  level2 = doc.createElement("agencyFees");
@@ -88,7 +130,7 @@ class XMLReadWrite {
 		  
 		  level2 = doc.createElement("tenantList");
 		  
-		  // build Tenant elements
+		  // build Tenant elements (i.e. tenants belonging to the current House node)
       for(Tenant t : h.getTenantList()) {
         
         Element level3 = doc.createElement("tenant");
@@ -134,7 +176,7 @@ class XMLReadWrite {
 		    
 		    level4 = doc.createElement("transactionList");
 		
-		    // build Transaction elements
+		    // build Transaction elements (i.e. Transactions belonging to the current Tenant node)
         for (Transaction tr : t.getTransactionList()) {
           
           Element level5 = doc.createElement("transaction");
@@ -154,7 +196,7 @@ class XMLReadWrite {
     // write the content into xml file
   	DOMSource source = new DOMSource(doc);
   	StreamResult result = new StreamResult(new File(outputXMLFile));
-  //	StreamResult result = new StreamResult(System.out); // testing to System.out
+  //	StreamResult result = new StreamResult(System.out); // test to System.out
   	
   	try {
   	  System.out.println("Writing XML representation of houses and tenants to '" + outputXMLFile + "'...");

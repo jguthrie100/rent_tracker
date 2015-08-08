@@ -1,11 +1,27 @@
 import java.util.Date;
 
+/** Transaction class that models every payment that is recorded in the online banking CSV file */
 class Transaction {
   private String bankAccountId, type, chequeNum, payee, memo;
   private Date date;
   private int id;
   private Double amount;
   
+  /**
+   * Creates a new Transaction object (modelling a transaction on the bank account).
+   *  - bankAccountId refers to the bank account that the transaction belongs to.
+   *  - All other parameters relate to the columns in the bank account CSV file.
+   *  - Values can only be set during construction, and after that they are read only
+   * 
+   * @param bankAccountId   String value relating to unique sort code/account number id of the bank account this transaction belongs to 
+   * @param date            Date that the transaction was made
+   * @param id              Unique id of the transaction
+   * @param type            Type/Method of transaction 
+   * @param chequeNum       
+   * @param payee           String value referring to the payee of the payment
+   * @param memo            Customisable memo for the transaction where further information relating to the transaction is stored
+   * @param amount          Cash amount of the transaction. Positive value is an incoming payment; negative value is an outgoing payment
+   */
   Transaction(String bankAccountId, Date date, int id, String type, String chequeNum, String payee, String memo, Double amount) {
     // Use private setter methods to allow for better exception handling
     setBankAccountId(bankAccountId);
@@ -72,8 +88,11 @@ class Transaction {
     return this.chequeNum;
   }
   
+  /**
+   * chequeNum tends to always be left blank in the CSV file. Hence allow for an empty string 
+   */
   private void setChequeNum(String chequeNum) {
-    // Cheque num is allowed to be an empty string
+    // Cheque num is allowed to be an empty string (but not null)
     if(chequeNum == null) {
       throw new IllegalArgumentException("Error: Cheque Num cannot be null");
     }
@@ -96,6 +115,9 @@ class Transaction {
     return this.memo;
   }
   
+  /**
+   * memo is an optional string entered by user at time of making the payment. Empty strings are hence valid
+   */
   private void setMemo(String memo) {
     // Memo is allowed to be an empty string
     if(memo == null) {

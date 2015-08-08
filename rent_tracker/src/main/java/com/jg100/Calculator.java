@@ -1,9 +1,12 @@
-import java.lang.IllegalArgumentException;
 import java.lang.Math;
 import java.util.Date;
 
+/**
+ * Calculator class contains a number of methods that can be used to calculate various values, such as total payments or outgoings or whatnot
+ */
 class Calculator {
   
+  /** Creates new Calculator object */
   Calculator() {
     
   }
@@ -12,11 +15,7 @@ class Calculator {
     return getIncome(bAcc, bAcc.getTransactionCollection().getDateFrom(), bAcc.getTransactionCollection().getDateTo());
   }
   
-  public double getOutgoings(BankAccount bAcc) {
-    return getOutgoings(bAcc, bAcc.getTransactionCollection().getDateFrom(), bAcc.getTransactionCollection().getDateTo());
-  }
-  
-  public double getIncome(BankAccount bAcc, Date dateFrom, Date dateTo) throws IllegalArgumentException {
+  public double getIncome(BankAccount bAcc, Date dateFrom, Date dateTo) {
     double income = 0.0;
     
     try {
@@ -32,7 +31,11 @@ class Calculator {
     return income;
   }
   
-  public double getOutgoings(BankAccount bAcc, Date dateFrom, Date dateTo) throws IllegalArgumentException {
+  public double getOutgoings(BankAccount bAcc) {
+    return getOutgoings(bAcc, bAcc.getTransactionCollection().getDateFrom(), bAcc.getTransactionCollection().getDateTo());
+  }
+  
+  public double getOutgoings(BankAccount bAcc, Date dateFrom, Date dateTo) {
     double outgoings = 0.0;
     
     try {

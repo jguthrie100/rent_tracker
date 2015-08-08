@@ -1,18 +1,35 @@
-import java.lang.IllegalArgumentException;
 import java.util.ArrayList;
 
+/**
+ * House class to model houses that the landlord rents out 
+ * 
+ * Each House object has information relating to general properties of the house (address, number of bedrooms, rental income etc)
+ *  as well as a list of tenants that lived/have lived at the house 
+ */
 class House {
   private String name, address;
   private int numBedrooms;
-  private double rent, agencyFees;
+  private double weeklyRent, agencyFees;
   private ArrayList<Tenant> tenantList;
   
-  House(String name, String address, int numBedrooms, double rent, double agencyFees) {
-    
+  /**
+   * House constructor to create new House object 
+   *  - Null or empty parameters are not allowed
+   * 
+   * Each House object has information relating to itself as well as a list of Tenant objects (relating to tenant's that live/lived there)
+   * 
+   * @param name          Name of the house. Can be first line of address or any unique(ish) identifier 
+   * @param address       Address of the house 
+   * @param numBedrooms   Number of bedrooms in the house (must be 1 or more)
+   * @param weeklyRent    Weekly cost of rent for the house
+   * @param agencyFees    Weekly cost of agency fees for the house
+   */
+  House(String name, String address, int numBedrooms, double weeklyRent, double agencyFees) {
+    /* Use setter methods to improve exception handling */
     setName(name);
     setAddress(address);
     setNumBedrooms(numBedrooms);
-    setRent(rent);
+    setWeeklyRent(weeklyRent);
     setAgencyFees(agencyFees);
     
     tenantList = new ArrayList<Tenant>();
@@ -51,15 +68,15 @@ class House {
     this.numBedrooms = numBedrooms;
   }
   
-  public double getRent() {
-    return this.rent;
+  public double getWeeklyRent() {
+    return this.weeklyRent;
   }
   
-  public void setRent(double rent) {
-    if(rent < 0.0) {
+  public void setWeeklyRent(double weeklyRent) {
+    if(weeklyRent < 0.0) {
       throw new IllegalArgumentException("Error: Rent must be greater than or equal to 0.0");
     }
-    this.rent = rent;
+    this.weeklyRent = weeklyRent;
   }
   
   public double getAgencyFees() {
@@ -73,8 +90,8 @@ class House {
     this.agencyFees = agencyFees;
   }
   
-  public double getRentPerBedroom() {
-    return (this.rent/this.numBedrooms);
+  public double getWeeklyRentPerBedroom() {
+    return (this.weeklyRent/this.numBedrooms);
   }
   
   public ArrayList<Tenant> getTenantList() {
