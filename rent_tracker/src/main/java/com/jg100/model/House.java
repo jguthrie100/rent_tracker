@@ -1,3 +1,7 @@
+package com.jg100.model;
+import com.jg100.model.*;
+import com.jg100.parsers.*;
+
 import java.util.ArrayList;
 
 /**
@@ -6,7 +10,7 @@ import java.util.ArrayList;
  * Each House object has information relating to general properties of the house (address, number of bedrooms, rental income etc)
  *  as well as a list of tenants that lived/have lived at the house 
  */
-class House {
+public class House {
   private String name, address;
   private int numBedrooms;
   private double weeklyRent, agencyFees;
@@ -24,7 +28,7 @@ class House {
    * @param weeklyRent    Weekly cost of rent for the house
    * @param agencyFees    Weekly cost of agency fees for the house
    */
-  House(String name, String address, int numBedrooms, double weeklyRent, double agencyFees) {
+  public House(String name, String address, int numBedrooms, double weeklyRent, double agencyFees) {
     /* Use setter methods to improve exception handling */
     setName(name);
     setAddress(address);

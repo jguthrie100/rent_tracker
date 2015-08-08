@@ -1,5 +1,6 @@
-
-
+package com.jg100;
+import com.jg100.model.*;
+import com.jg100.parsers.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.FileReader;
@@ -91,21 +92,21 @@ public class RentTracker {
 		 */
 		try { 
       BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-      boolean rentPayment = false;
+      boolean isRentPayment = false;
       
   		for(Transaction tr : bAcc.getTransactionCollection().getTransactions()) {
   		  // loop through each transaction record
   		  
-  		  rentPayment = false;  // reset rentPayment flag just incase its still true from the previous loop
+  		  isRentPayment = false;  // reset rentPayment flag just incase its still true from the previous loop
         
         for(House h : houseList) {  // loop through each house & then each tenant 
           for(Tenant t : h.getTenantList()) {
-            if((tr.getPayee().contains(t.getPaymentHandle()) || tr.getMemo().contains(t.getPaymentHandle())) && !rentPayment) {
+            if((tr.getPayee().contains(t.getPaymentHandle()) || tr.getMemo().contains(t.getPaymentHandle())) && !isRentPayment) {
               // if tenant's 'payment handle' matches transaction payee or memo fields, then we know the payment was made by this tenant
               
               if(rentMultiple(tr.getAmount(), t.getWeeklyRent(), 4)) {
                 // if transaction amount matches expected rent (or a multiple of), we can automatically flag the transaction as being a rental payment
-                rentPayment = true;
+                isRentPayment = true;
                 
               } else {
                 // otherwise we prompt the user to confirm whether its a rental payment or not
@@ -116,12 +117,12 @@ public class RentTracker {
                 if(input.readLine().toLowerCase().trim().equals("y")) {
                   // if they type 'y', then flag the payment as a rental payment
                   System.out.println(" ---> Payment marked as rent");
-                  rentPayment = true;
+                  isRentPayment = true;
                 }
               }
               
               // Add to tenant's list of rent payments if payment is a rental payment
-              if(rentPayment) {
+              if(isRentPayment) {
                 t.getTransactionList().add(tr);
               }
             }

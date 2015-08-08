@@ -1,3 +1,7 @@
+package com.jg100.parsers;
+import com.jg100.model.*;
+import com.jg100.parsers.*;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.text.DecimalFormat;
@@ -20,7 +24,7 @@ import org.w3c.dom.Element;
 /** XMLReadWrite reads and writes various pieces of information (relating to tenants, houses, transactions etc) from/to XML files
  *  Essentialy acts as a sort of database handler, wherein information is transferred from XML files to the program
  */
-class XMLReadWrite {
+public class XMLReadWrite {
   
   private static DocumentBuilder docBuilder;
   

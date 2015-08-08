@@ -1,3 +1,7 @@
+package com.jg100.model;
+import com.jg100.model.*;
+import com.jg100.parsers.*;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -6,12 +10,12 @@ import java.util.Date;
  *  The dateFrom, dateTo values are essentially the boundaries of the collection. All the Transactions in the collection 
  *  must lie between or on those dates
  */
-class TransactionCollection {
+public class TransactionCollection {
   private ArrayList<Transaction> tRecords;
   private Date dateFrom, dateTo;
   
   /** Constructor creates new empty collection of transactions */
-  TransactionCollection() {
+  public TransactionCollection() {
     tRecords = new ArrayList<>();
   }
   

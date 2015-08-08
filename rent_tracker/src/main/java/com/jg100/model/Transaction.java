@@ -1,7 +1,11 @@
+package com.jg100.model;
+import com.jg100.model.*;
+import com.jg100.parsers.*;
+
 import java.util.Date;
 
 /** Transaction class that models every payment that is recorded in the online banking CSV file */
-class Transaction {
+public class Transaction {
   private String bankAccountId, type, chequeNum, payee, memo;
   private Date date;
   private int id;
@@ -22,7 +26,7 @@ class Transaction {
    * @param memo            Customisable memo for the transaction where further information relating to the transaction is stored
    * @param amount          Cash amount of the transaction. Positive value is an incoming payment; negative value is an outgoing payment
    */
-  Transaction(String bankAccountId, Date date, int id, String type, String chequeNum, String payee, String memo, Double amount) {
+  public Transaction(String bankAccountId, Date date, int id, String type, String chequeNum, String payee, String memo, Double amount) {
     // Use private setter methods to allow for better exception handling
     setBankAccountId(bankAccountId);
     setDate(date);

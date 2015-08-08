@@ -1,3 +1,6 @@
+package com.jg100;
+import com.jg100.model.*;
+import com.jg100.parsers.*;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
@@ -18,7 +21,7 @@ import java.text.DecimalFormat;
  * Its essentially used to put various rent payments / misc payments into a Google Calendar so that they can be browsed
  *  through in a nice month-by-month way.
  */
-class CalendarAccessor {
+public class CalendarAccessor {
   
   private static final String APP_NAME = "Rental Income Tracker";
   
@@ -49,7 +52,7 @@ class CalendarAccessor {
   /**
    * Constructor authenticates with Google (using Auth2.0) and creates the core Calendar service object that we use in later methods
    */
-  CalendarAccessor() throws Exception {
+  public CalendarAccessor() throws Exception {
     
     /* OAuth 2.0 authentications variables - refer to Calendar API authorisation docs online */
     final String SERVICE_EMAIL = "332745442057-5b9b5rt8oqa2g5vpugp0u5qhlhkkl1ta@developer.gserviceaccount.com";

@@ -1,3 +1,7 @@
+package com.jg100.model;
+import com.jg100.model.*;
+import com.jg100.parsers.*;
+
 import org.joda.time.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,7 +12,7 @@ import java.util.Date;
  * Each Tenant has information relating to their personal information (phone, email, rent amount etc),
  *  as well as a list of transactions/payments that they have made into the bank account
  */
-class Tenant {
+public class Tenant {
   private String name, paymentHandle, phoneNum, email;
   private double weeklyRent;
   private int rentFrequency;

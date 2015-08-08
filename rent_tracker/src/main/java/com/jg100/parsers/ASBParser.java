@@ -1,3 +1,7 @@
+package com.jg100.parsers;
+import com.jg100.model.*;
+import com.jg100.parsers.*;
+
 import java.text.ParseException;
 import java.util.regex.*;
 import java.util.Date;
@@ -9,7 +13,7 @@ import java.text.SimpleDateFormat;
  * Its used to basically convert banking payments that are provided in CSV format, to a format that can be used in the program,
  *  which essentially means populating the data into Transaction objects
  */
-class ASBParser implements StatementParser {
+public class ASBParser implements StatementParser {
   public ASBParser() {
     
   }

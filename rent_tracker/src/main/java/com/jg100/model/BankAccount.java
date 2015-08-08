@@ -1,16 +1,20 @@
+package com.jg100.model;
+import com.jg100.model.*;
+import com.jg100.parsers.*;
+
 /**
  * Class that models a bank account.
  * Contains information such as the sort code and account number (part of accountId) and account balance
  * All the transactions (rent payments, insurance payments, mortgage payments etc) belonging to this bank account 
  * will be stored in the TransactionCollection
  */
-class BankAccount {
+public class BankAccount {
   private String accountId = "";
   private Double balance = 0.0;
   private TransactionCollection tCollection;
   
   /** Constructor creates a new TransactionCollection object */
-  BankAccount() {
+  public BankAccount() {
     tCollection = new TransactionCollection();
   }
   

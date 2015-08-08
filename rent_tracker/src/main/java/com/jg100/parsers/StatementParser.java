@@ -1,3 +1,7 @@
+package com.jg100.parsers;
+import com.jg100.model.*;
+import com.jg100.parsers.*;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 
@@ -15,5 +19,5 @@ import java.util.ArrayList;
    * @param lineNum The current line of the CSV file that is being read.
    * @param lineText A String containing the line of the CSV file that needs to be parsed
    */
-   BankAccount parseLine(BankAccount bAcc, int lineNum, String lineText) throws ParseException;
+   public BankAccount parseLine(BankAccount bAcc, int lineNum, String lineText) throws ParseException;
 }
