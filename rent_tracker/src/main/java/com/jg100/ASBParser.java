@@ -1,8 +1,12 @@
+import java.lang.IllegalArgumentException;
 import java.text.ParseException;
 import java.util.regex.*;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
+/**
+ * ASBParser is a parser written specifically for CSV files downloaded from the ASB bank online banking site 
+ */
 class ASBParser implements StatementParser {
   public ASBParser() {
     
@@ -24,22 +28,31 @@ class ASBParser implements StatementParser {
    * @param lineText String containing the line of text that is to be parsed 
    */
   public BankAccount parseLine(BankAccount bAcc, int lineNum, String lineText) throws ParseException {
+    if(bAcc == null) {
+      throw new IllegalArgumentException("Error: Bank Account object cannot be null");
+    }
+    if(lineNum <= 0) {
+      throw new IllegalArgumentException("Error: Line Num must be equal to 1 or more");
+    }
+    if(lineText == null) { // empty string is ok though
+      throw new IllegalArgumentException("Error: The line of text cannot be null");
+    }
     
     /*
-    Get bank account ID using regex
+    Line 2: Get bank account ID using regex
     */
     if(lineNum == 2) {
       Pattern p = Pattern.compile("^Bank (\\d{2}); Branch (\\d{4}); Account (\\d{7}-\\d{2})");
       Matcher m = p.matcher(lineText);
       if(m.find()) {
-        bAcc.setAccountID(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
+        bAcc.setAccountId(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
       } else {
-        throw new ParseException("Line (" + lineNum + ") doesn't contain a valid bank account string: \"Bank dd; Branch dddd; Account ddddddd-dd\". Line = '" + lineText + "'", 0);
+        throw new ParseException("Line (" + lineNum + ") doesn't contain a valid bank account string: Expected \"Bank 00; Branch 0000; Account 0000000-00\". Line = '" + lineText + "'", 0);
       }
     }
     
     /*
-    Get date that records start from using regex
+    Line 3: Get date that records start from using regex
     */
     if(lineNum == 3) {
       Pattern p = Pattern.compile("^From date (\\d{4}[0-1]\\d[0-3]\\d)$");
@@ -47,12 +60,12 @@ class ASBParser implements StatementParser {
       if(m.find()) {
         bAcc.getTransactionCollection().setDateFrom(new SimpleDateFormat("yyyyMMdd").parse(m.group(1)));
       } else {
-        throw new ParseException("Line (" + lineNum + ") doesn't contain a valid Date string: \"From date yyyyMMdd\". Line = '" + lineText + "'", 0);
+        throw new ParseException("Line (" + lineNum + ") doesn't contain a valid Date string: Expected \"From date yyyyMMdd\". Line = '" + lineText + "'", 0);
       }
     }
     
     /*
-    Get date that records end at using regex
+    Line 4: Get date that records end at using regex
     */
     if(lineNum == 4) {
       Pattern p = Pattern.compile("^To date (\\d{4}[0-1]\\d[0-3]\\d)$");
@@ -70,12 +83,12 @@ class ASBParser implements StatementParser {
         }
         
       } else {
-        throw new ParseException("Line (" + lineNum + ") doesn't contain a valid Date string: \"To date yyyyMMdd\". Line = '" + lineText + "'", 0);
+        throw new ParseException("Line (" + lineNum + ") doesn't contain a valid Date string: Expected \"To date yyyyMMdd\". Line = '" + lineText + "'", 0);
       }
     }
     
     /*
-    Get the balance of the bank account using regex
+    Line 6: Get the balance of the bank account using regex
     */
     if(lineNum == 6) {
       Pattern p = Pattern.compile("Ledger Balance : (-?\\d+\\.\\d{2})\\s");
@@ -83,16 +96,17 @@ class ASBParser implements StatementParser {
       if(m.find()) {
         bAcc.setBalance(Double.parseDouble(m.group(1)));
       } else {
-        throw new ParseException("Line (" + lineNum + ") doesn't contain a valid account balance. Line = '" + lineText + "'", 0);
+        throw new ParseException("Line (" + lineNum + ") doesn't contain a valid account balance: Expected \"Ledger Balance : 000.00\". Line = '" + lineText + "'", 0);
       }
     }
     
     /*
+    Line 9 onwards:
     This pattern matches the majority of lines i.e. the records of each transaction
     Get the various details of each transaction record 
      i.e. date of transaction, id number, type of payment, amount of payment, recipient of payment etc etc 
      
-     Pattern match gets quite specific - ensures date is formatted relatively correctly with yyyy/MM/dd,
+     Pattern match gets quite specific - ensures date is formatted correctly with yyyy/MM/dd (not a perfect regex, but pretty decent),
       - ensures id number corresponds to the transaction date,
       - ensures transaction amount is formatted correctly
     */
@@ -112,7 +126,7 @@ class ASBParser implements StatementParser {
         
         // Add transaction record to the transaction collection
         bAcc.getTransactionCollection().getTransactions().add(
-          new Transaction(bAcc.getAccountID(), sdf.parse(dateStr), Integer.parseInt(m.group(5)), m.group(6), m.group(7), m.group(8), m.group(9), Double.parseDouble(m.group(10)))
+          new Transaction(bAcc.getAccountId(), sdf.parse(dateStr), Integer.parseInt(m.group(5)), m.group(6), m.group(7), m.group(8), m.group(9), Double.parseDouble(m.group(10)))
         );
       } else {
         throw new ParseException("Line (" + lineNum + ") doesn't match expected pattern. Line = '" + lineText + "'", 0);

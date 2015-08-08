@@ -14,7 +14,7 @@ public class RentTracker {
     String csv_file = "";
     
     if(args.length == 0) {
-      System.out.println("Missing argument: Please pass String argument pointing to a CSV file");
+      System.out.println("Missing argument: Please pass String argument pointing to a valid CSV file");
       System.out.println("e.g. java RentTracker \"/home/jg100/.config/asb_23072015.csv\" ");
       System.exit(0);
     } else {
@@ -23,11 +23,12 @@ public class RentTracker {
     
     ArrayList<House> houseList = new ArrayList<House>();
     BankAccount bAcc = new BankAccount();
-    ASBParser asbParser = new ASBParser();
+    ASBParser asbParser = new ASBParser(); // ASB is name of a bank in New Zealand
     Calculator calc = new Calculator();
     CalendarAccessor calendar = new CalendarAccessor();
     XMLReadWrite xmlRW = new XMLReadWrite();
     
+    // Create list of houses
     houseList.add(new House("586B Maunganui Road, Mt Maunganui", "586B Maunganui Road, Mount Maunganui, Tauranga 3116, New Zealand", 3, 400.00, 34.50));
     houseList.add(new House("128A Fernhill Road, Queenstown", "128A Fernhill Road, Fernhill, Queenstown 9300, New Zealand", 3, 450.00, 0.00));
     

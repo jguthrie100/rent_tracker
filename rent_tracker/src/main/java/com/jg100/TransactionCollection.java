@@ -11,6 +11,11 @@ class TransactionCollection {
   }
   
   public void setDateFrom(Date dateFrom) {
+    if(dateFrom == null) {
+      throw new IllegalArgumentException("Error: Date From cannot be null or empty");
+    } else if(getDateTo() != null && dateFrom.after(getDateTo())) {
+      throw new IllegalArgumentException("Error: DateFrom cannot be set to a date after the DateTo date");
+    }
     this.dateFrom = dateFrom;
   }
   
@@ -19,6 +24,11 @@ class TransactionCollection {
   }
   
   public void setDateTo(Date dateTo) {
+    if(dateTo == null) {
+      throw new IllegalArgumentException("Error: Date To cannot be null or empty");
+    } else if(getDateFrom() != null && dateTo.before(getDateFrom())) {
+      throw new IllegalArgumentException("Error: DateTo cannot be set to a date before the DateFrom date");
+    }
     this.dateTo = dateTo;
   }
   
@@ -33,11 +43,13 @@ class TransactionCollection {
   /**
    * Returns a copy of the Transaction arraylist containing only the entries between the given dates
    */
-  public ArrayList<Transaction> getTransactions(Date dateFrom, Date dateTo) throws IllegalArgumentException {
+  public ArrayList<Transaction> getTransactions(Date dateFrom, Date dateTo) {
     ArrayList<Transaction> trOut = new ArrayList<Transaction>();
     
-    if(dateFrom.after(dateTo) || dateFrom.before(this.getDateFrom()) || dateTo.after(this.getDateTo())) {
-      throw new IllegalArgumentException("Please check you have entered valid dates; Must be between " + this.getDateFrom() + " and " + this.getDateTo());
+    if(dateFrom == null || dateTo == null) {
+      throw new IllegalArgumentException("Error: dates cannot be passed as null values");
+    }if(dateFrom.after(dateTo) || dateFrom.before(this.getDateFrom()) || dateTo.after(this.getDateTo())) {
+      throw new IllegalArgumentException("Error: Please check you have entered valid dates; Must be between " + this.getDateFrom() + " and " + this.getDateTo());
     }
     
     for(Transaction tr : this.tRecords) {

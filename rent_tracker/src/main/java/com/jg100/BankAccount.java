@@ -1,5 +1,7 @@
+import java.lang.IllegalArgumentException;
+
 class BankAccount {
-  private String accountID = "";
+  private String accountId = "";
   private Double balance = 0.0;
   private TransactionCollection tCollection;
   
@@ -7,12 +9,15 @@ class BankAccount {
     tCollection = new TransactionCollection();
   }
   
-  public void setAccountID(String accountID) {
-    this.accountID = accountID;
+  public void setAccountId(String accountId) {
+    if(accountId == null || accountId.isEmpty()) {
+      throw new IllegalArgumentException("Error: Account ID cannot be null or empty");
+    }
+    this.accountId = accountId;
   }
   
-  public String getAccountID() {
-    return this.accountID;
+  public String getAccountId() {
+    return this.accountId;
   }
   
   public void setBalance(Double balance) {
