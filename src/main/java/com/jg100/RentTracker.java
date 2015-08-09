@@ -43,26 +43,12 @@ public class RentTracker {
     XMLReadWrite xmlRW = new XMLReadWrite();
     DecimalFormat df = new DecimalFormat("0.00");
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-    Date date = new Date();
     
-    /*
-    // Create list of houses
-    houseList.add(new House("586B Maunganui Road, Mt Maunganui", "586B Maunganui Road, Mount Maunganui, Tauranga 3116, New Zealand", 3, 400.00, 34.50));
-    houseList.add(new House("128A Fernhill Road, Queenstown", "128A Fernhill Road, Fernhill, Queenstown 9300, New Zealand", 3, 450.00, 0.00));
-    
-    // List of tenants - later versions can store this in an .xml file
-    houseList.get(0).getTenantList().add(new Tenant("Florence Guthrie", "F S A GUTHRIE, J D S", "0123456789", "flo_guthrie@gmail.com", sdf.parse("2015/04/01"), 350.00, 1));
-    houseList.get(0).getTenantList().get(0).setLeaseEnd(sdf.parse("2015/05/19"));
-    houseList.get(0).getTenantList().add(new Tenant("Realty Focus Ltd", "REALTY FOCUS LTD", "01234567890123", "realty_focus@gmail.com", sdf.parse("2015/04/15"), 365.50, 2));
-    houseList.get(1).getTenantList().add(new Tenant("Florence Guthrie", "F S A GUTHRIE", "0123456789", "flo_guthrie@gmail.com", date, 450.00, 1));
-    houseList.get(1).getTenantList().add(new Tenant("Hannah Caithness", "CAITHNESS, H W", "01234567890", "hannah_caithness@gmail.com", date, 450.00, 1));
-    houseList.get(1).getTenantList().add(new Tenant("Josh Goodbourn", "Goodbourn J T", "012345678901", "josh_goodbourn@gmail.com", date, 150.00, 1));
-    houseList.get(1).getTenantList().add(new Tenant("James Ronaldson", "RONALDSON J", "0123456789012", "james_ronaldson@gmail.com", date, 150.00, 1));
-    houseList.get(1).getTenantList().add(new Tenant("Steven Anglin", "S S ANGLIN", "01234567890123", "steven_anglin@gmail.com", date, 150.00, 1));
-    */
-    
-    //populate houseList using XML file
-	  houseList = xmlRW.readTenantsXML(bAcc);
+    //populate houseList using data from XML file
+	  houseList = xmlRW.readTenantsXML();
+	  
+	  // option to populate using hardcoded methods...
+	  //houseList = populateHouseList();
     
     /** Read and parse CSV file containing bank transactions */
     System.out.println("Opening CSV file: " + csv_file);
@@ -184,5 +170,27 @@ public class RentTracker {
 	    }
 	  }
 	  return false;
+	}
+	
+	private static ArrayList<House> populateHouseList() throws ParseException {
+	  ArrayList<House> houseList = new ArrayList<House>();
+	  SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+    Date date = new Date();
+    
+    // Create list of houses
+    houseList.add(new House("586B Maunganui Road, Mt Maunganui", "586B Maunganui Road, Mount Maunganui, Tauranga 3116, New Zealand", 3, 400.00, 34.50));
+    houseList.add(new House("128A Fernhill Road, Queenstown", "128A Fernhill Road, Fernhill, Queenstown 9300, New Zealand", 3, 450.00, 0.00));
+    
+    // List of tenants - later versions can store this in an .xml file
+    houseList.get(0).getTenantList().add(new Tenant("Florence Guthrie", "F S A GUTHRIE, J D S", "0123456789", "flo_guthrie@gmail.com", sdf.parse("2015/04/01"), 350.00, 1));
+    houseList.get(0).getTenantList().get(0).setLeaseEnd(sdf.parse("2015/05/19"));
+    houseList.get(0).getTenantList().add(new Tenant("Realty Focus Ltd", "REALTY FOCUS LTD", "01234567890123", "realty_focus@gmail.com", sdf.parse("2015/04/15"), 365.50, 2));
+    houseList.get(1).getTenantList().add(new Tenant("Florence Guthrie", "F S A GUTHRIE", "0123456789", "flo_guthrie@gmail.com", date, 450.00, 1));
+    houseList.get(1).getTenantList().add(new Tenant("Hannah Caithness", "CAITHNESS, H W", "01234567890", "hannah_caithness@gmail.com", date, 450.00, 1));
+    houseList.get(1).getTenantList().add(new Tenant("Josh Goodbourn", "Goodbourn J T", "012345678901", "josh_goodbourn@gmail.com", date, 150.00, 1));
+    houseList.get(1).getTenantList().add(new Tenant("James Ronaldson", "RONALDSON J", "0123456789012", "james_ronaldson@gmail.com", date, 150.00, 1));
+    houseList.get(1).getTenantList().add(new Tenant("Steven Anglin", "S S ANGLIN", "01234567890123", "steven_anglin@gmail.com", date, 150.00, 1));
+    
+    return houseList;
 	}
 }
