@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * Class that handles sending/receiving data with a Google Calendar. 
@@ -27,7 +28,7 @@ public class CalendarAccessor {
   private static final String APP_NAME = "Rental Income Tracker";
   
   /* Unique Calendar ID that refers to a specific Google Calendar that we want to write to/read from */
-  private static final String CALENDAR_ID = "4arncnqhr28qfd4qg0tfolqjr0@group.calendar.google.com";
+  private static final String CALENDAR_ID = "8cug1mvjco2p0s57f8etcfj130@group.calendar.google.com";
   
   /* Global instance of the JSON factory. */
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
@@ -84,13 +85,12 @@ public class CalendarAccessor {
     
     String id = tr.getFullId();
     
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
     DecimalFormat df = new DecimalFormat("0.00");
     String title = "$" + df.format(tr.getAmount()) + " - " + tenant;
     
     /* Create a description that gets saved in the Calendar event */
-    String description = title + System.lineSeparator();
-    description += house + System.lineSeparator();
-    description += tr.getPayee() + System.lineSeparator();
+    String description = tr.getPayee() + System.lineSeparator();
     description += tr.getMemo() + System.lineSeparator();
     description += System.lineSeparator() + "id: " + id;
     
@@ -105,11 +105,12 @@ public class CalendarAccessor {
                 break;
     }
     
-    // Test output - print to console
+    /* Test output - print to console
     System.out.println("------------------------------------");
     System.out.println("   " + title + "    ");
     System.out.println(description);
     System.out.println("------------------------------------" + System.lineSeparator());
+    */
     
     /* Create new Calendar event */
     Event event = new Event()
@@ -131,10 +132,42 @@ public class CalendarAccessor {
     .setDateTime(endDateTime);
     event.setEnd(end);
     
-    /* Add the event to the Calendar using service object */
+    // Check if the Event we want to add already exists in the Calendar
+    try {
+      Event e = getEvent(id);
+
+      /* Compare all the event details and update if anything is different.
+         - The crazy long date comparisons are because we need to break the awkward DateTime object right down into a basic string 
+         in order to compare it properly. Also, when the Calendar switches to daylight saving time it messes up with the comparison 
+         unless we only compare the first 10 chars of the dates.. i.e. just yyyy-MM-dd, rather than all the hours and minutes too 
+      */
+      if(e.getSummary().equals(title) && e.getDescription().equals(description)
+         && e.getLocation().equals(house) && e.getColorId().equals(eventColor)
+         && e.getStart().getDateTime().toString().substring(0, 10).equals(start.getDateTime().toString().substring(0, 10))
+         && e.getEnd().getDateTime().toString().substring(0, 10).equals(end.getDateTime().toString().substring(0, 10))) {
+        return id;
+      } else {
+        // Event exists, but details are different. Update event with new details
+        service.events().update(CALENDAR_ID, event.getId(), event).execute();
+        return id;
+      }
+    } catch (Exception e) {
+      // Error getting Event - probably doesn't exist yet
+      // Continue and create new event
+    }
+    
+    /* Insert the event to the Calendar using service object */
     event = service.events().insert(CALENDAR_ID, event).execute();
     
-    /* return event id that the event is saved under in the calendar */
     return id;
+  }
+  
+  /**
+   * Grabs an Event object (with given id) from the Calendar 
+   */
+  public Event getEvent(String id) throws IOException {
+    Event event = service.events().get(CALENDAR_ID, id).execute();
+    
+    return event;
   }
 }

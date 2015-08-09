@@ -21,7 +21,7 @@ public class RentTracker {
   /**
    * Main program method 
    * 
-   * @param args  Takes 1 argument - String containing internet banking CSV file 
+   * @param args  Takes 1 argument - A string containing internet banking CSV file 
    */
   public static void main(String[] args) throws Exception {
     String csv_file = "";
@@ -38,11 +38,8 @@ public class RentTracker {
     ArrayList<House> houseList = new ArrayList<House>();
     BankAccount bAcc = new BankAccount();
     ASBParser asbParser = new ASBParser(); // ASB is name of a bank in New Zealand
-    Calculator calc = new Calculator();
     CalendarAccessor calendar = new CalendarAccessor();
     XMLReadWrite xmlRW = new XMLReadWrite();
-    DecimalFormat df = new DecimalFormat("0.00");
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
     
     //populate houseList using data from XML file
 	  houseList = xmlRW.readTenantsXML();
@@ -76,79 +73,8 @@ public class RentTracker {
 			e.printStackTrace();
 		}
 		
-		/*  The idea here is to loop through all the transaction records and determine whether or not each one 
-		 *   matches up to a tenant. 
-		 *  
-		 *  In order to do this, we need to loop through each tenant and see if the transaction details match
-		 *   i.e. if their name matches the transaction payee or memo, and whether the payment amount is equal to their rent. 
-		 * 
-		 *  For any cases where the name matches the transaction, but the amount doesn't match their rent, we prompt the user to confirm whether
-		 *   its a rental payment or not 
-		 */
-		try { 
-      BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-      boolean isRentPayment = false;
-      
-  		for(Transaction tr : bAcc.getTransactionCollection().getTransactions()) {
-  		  // loop through each transaction record
-  		  
-  		  isRentPayment = false;  // reset rentPayment flag just incase its still true from the previous loop
-        
-        for(House h : houseList) {  // loop through each house & then each tenant 
-          for(Tenant t : h.getTenantList()) {
-            if((tr.getPayee().contains(t.getPaymentHandle()) || tr.getMemo().contains(t.getPaymentHandle())) && !isRentPayment) {
-              // if tenant's 'payment handle' matches transaction payee or memo fields, then we know the payment was made by this tenant
-              
-              if(rentMultiple(tr.getAmount(), t.getWeeklyRent(), 4)) {
-                // if transaction amount matches expected rent (or a multiple of), we can automatically flag the transaction as being a rental payment
-                isRentPayment = true;
-                
-              } else {
-                // otherwise we prompt the user to confirm whether its a rental payment or not
-                System.out.println("----------------------------------------");
-                System.out.println(sdf.format(tr.getDate()) + ": " + tr.getAmount() + " - " + t.getPaymentHandle());
-                System.out.print("Is this payment a rental payment for " + h.getName() + "? (y/n): ");
- 
-                if(input.readLine().toLowerCase().trim().equals("y")) {
-                  // if they type 'y', then flag the payment as a rental payment
-                  System.out.println(" ---> Payment marked as rent");
-                  isRentPayment = true;
-                }
-              }
-              
-              // Add to tenant's list of rent payments if payment is a rental payment
-              if(isRentPayment) {
-                t.getTransactionList().add(tr);
-              }
-            }
-          }
-        }
-  		}
-    } catch (Exception e) {
-      System.out.println("Error opening input/output stream.");
-      e.printStackTrace();
-    }
+		houseList = identifyRentPayments(houseList, bAcc.getTransactionCollection(), calendar);
     
-    /** This loop adds every payment of each tenant to the calendar */
-    for(House h : houseList) {  // loop through each house & then each tenant 
-      for(Tenant t : h.getTenantList()) {
-        for (Transaction tr : t.getTransactionList()) {
-          System.out.println("----------------------------");
-          System.out.println(sdf.format(tr.getDate()) + " | " + h.getName() + " : " + t.getName() + " - " + df.format(tr.getAmount()));
-
-          try {
-            calendar.addRentPayment(h.getName(), t.getName(), tr);
-          } catch (Exception e) {
-            System.out.println("Failed to update Calendar. The rent payment may already be saved from a previous session");
-          }
-          System.out.println("");
-        }
-        System.out.println(t.getName() + " - Days rented: " + (int) Math.round(t.getTotalRentExpected() * 7 / t.getWeeklyRent()));
-        System.out.println("Total rent expected: " + df.format(t.getTotalRentExpected()));
-        System.out.println("Total rent paid: " + df.format(t.getTotalRentPaid()));
-        System.out.println("----");
-      }
-    }
     if(houseList.size() != 0) {
 		  xmlRW.writeTenantsXML(houseList);
     }
@@ -190,6 +116,100 @@ public class RentTracker {
     houseList.get(1).getTenantList().add(new Tenant("Josh Goodbourn", "Goodbourn J T", "012345678901", "josh_goodbourn@gmail.com", date, 150.00, 1));
     houseList.get(1).getTenantList().add(new Tenant("James Ronaldson", "RONALDSON J", "0123456789012", "james_ronaldson@gmail.com", date, 150.00, 1));
     houseList.get(1).getTenantList().add(new Tenant("Steven Anglin", "S S ANGLIN", "01234567890123", "steven_anglin@gmail.com", date, 150.00, 1));
+    
+    return houseList;
+	}
+	
+	private static ArrayList<House> identifyRentPayments(ArrayList<House> houseList, TransactionCollection tc) {
+	  return identifyRentPayments(houseList, tc, null);
+	}
+	
+	/*  The idea here is to loop through all the transaction records and determine whether or not each one 
+	 *   matches up to a tenant. 
+	 *  
+	 *  In order to do this, we need to loop through each tenant and see if the transaction details match
+	 *   i.e. if their name matches the transaction payee or memo, and whether the payment amount is equal to their rent. 
+	 * 
+	 *  For any cases where the name matches the transaction, but the amount doesn't match their rent, we prompt the user to confirm whether
+	 *   its a rental payment or not 
+	 */
+	private static ArrayList<House> identifyRentPayments(ArrayList<House> houseList, TransactionCollection tc, CalendarAccessor calendar) {
+	  SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+	  DecimalFormat df = new DecimalFormat("0.00");
+	  
+		try { 
+      BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+      boolean isRentPayment = false;
+      
+  		for(Transaction tr : tc.getTransactions()) {
+  		  // loop through each transaction record
+  		  
+  		  isRentPayment = false;  // reset rentPayment flag just incase its still true from the previous loop
+        
+        for(House h : houseList) {  // loop through each house & then each tenant 
+          for(Tenant t : h.getTenantList()) {
+            if((tr.getPayee().contains(t.getPaymentHandle()) || tr.getMemo().contains(t.getPaymentHandle())) && !isRentPayment) {
+              // if tenant's 'payment handle' matches transaction payee or memo fields, then we know the payment was made by this tenant
+              
+              if(rentMultiple(tr.getAmount(), t.getWeeklyRent(), 4)) {
+                // if transaction amount matches expected rent (or a multiple of), we can automatically flag the transaction as being a rental payment
+                isRentPayment = true;
+                
+              } else {
+                // otherwise we prompt the user to confirm whether its a rental payment or not
+                System.out.println("----------------------------------------");
+                System.out.println(sdf.format(tr.getDate()) + ": $" + df.format(tr.getAmount()) + " - " + t.getPaymentHandle());
+                System.out.print("Is this payment a rental payment for " + h.getName() + "? (y/n): ");
+ 
+                if(input.readLine().toLowerCase().trim().equals("y")) {
+                  // if they type 'y', then flag the payment as a rental payment
+                  System.out.println(" ---> Payment marked as rent");
+                  isRentPayment = true;
+                }
+              }
+              
+              // Add to tenant's list of rent payments if payment is a rental payment
+              if(isRentPayment) {
+                t.getTransactionList().add(tr);
+                
+                if(calendar != null) {
+                  // Add payment to the Calendar too
+                  try {
+                    calendar.addRentPayment(h.getName(), t.getName(), tr);
+                  } catch (Exception e) {
+                    System.out.println("Failed to update Calendar. Chances are the rent payment was already saved to the Calendar during a previous session");
+                  }
+                }
+              }
+            }
+          }
+        }
+  		}
+    } catch (IOException e) {
+      System.out.println("Error opening input/output stream.");
+      e.printStackTrace();
+    }
+    
+    /** This loop adds every payment of each tenant to the calendar */
+/*    for(House h : houseList) {  // loop through each house & then each tenant 
+      for(Tenant t : h.getTenantList()) {
+        for (Transaction tr : t.getTransactionList()) {
+          System.out.println("----------------------------");
+          System.out.println(sdf.format(tr.getDate()) + " | " + h.getName() + " : " + t.getName() + " - " + df.format(tr.getAmount()));
+
+          try {
+            calendar.addRentPayment(h.getName(), t.getName(), tr);
+          } catch (Exception e) {
+            System.out.println("Failed to update Calendar. The rent payment may already be saved from a previous session");
+          }
+          System.out.println("");
+        }
+        System.out.println(t.getName() + " - Days rented: " + (int) Math.round(t.getTotalRentExpected() * 7 / t.getWeeklyRent()));
+        System.out.println("Total rent expected: " + df.format(t.getTotalRentExpected()));
+        System.out.println("Total rent paid: " + df.format(t.getTotalRentPaid()));
+        System.out.println("----");
+      }
+    }*/
     
     return houseList;
 	}
