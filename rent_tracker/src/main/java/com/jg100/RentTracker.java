@@ -34,28 +34,35 @@ public class RentTracker {
       csv_file = args[0];
     }
     
+    // Variables used throughout main()
     ArrayList<House> houseList = new ArrayList<House>();
     BankAccount bAcc = new BankAccount();
     ASBParser asbParser = new ASBParser(); // ASB is name of a bank in New Zealand
     Calculator calc = new Calculator();
     CalendarAccessor calendar = new CalendarAccessor();
     XMLReadWrite xmlRW = new XMLReadWrite();
+    DecimalFormat df = new DecimalFormat("0.00");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+    Date date = new Date();
     
+    /*
     // Create list of houses
     houseList.add(new House("586B Maunganui Road, Mt Maunganui", "586B Maunganui Road, Mount Maunganui, Tauranga 3116, New Zealand", 3, 400.00, 34.50));
     houseList.add(new House("128A Fernhill Road, Queenstown", "128A Fernhill Road, Fernhill, Queenstown 9300, New Zealand", 3, 450.00, 0.00));
     
     // List of tenants - later versions can store this in an .xml file
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-    Date date = new Date();
-    houseList.get(0).getTenantList().add(new Tenant("Florence Guthrie", "F S A GUTHRIE, J D S", "0123456789", "flo_guthrie@gmail.com", sdf.parse("2014/11/25"), 350.00, 1));
-    houseList.get(0).getTenantList().get(0).setLeaseEnd(sdf.parse("2015/04/17"));
+    houseList.get(0).getTenantList().add(new Tenant("Florence Guthrie", "F S A GUTHRIE, J D S", "0123456789", "flo_guthrie@gmail.com", sdf.parse("2015/04/01"), 350.00, 1));
+    houseList.get(0).getTenantList().get(0).setLeaseEnd(sdf.parse("2015/05/19"));
     houseList.get(0).getTenantList().add(new Tenant("Realty Focus Ltd", "REALTY FOCUS LTD", "01234567890123", "realty_focus@gmail.com", sdf.parse("2015/04/15"), 365.50, 2));
     houseList.get(1).getTenantList().add(new Tenant("Florence Guthrie", "F S A GUTHRIE", "0123456789", "flo_guthrie@gmail.com", date, 450.00, 1));
     houseList.get(1).getTenantList().add(new Tenant("Hannah Caithness", "CAITHNESS, H W", "01234567890", "hannah_caithness@gmail.com", date, 450.00, 1));
     houseList.get(1).getTenantList().add(new Tenant("Josh Goodbourn", "Goodbourn J T", "012345678901", "josh_goodbourn@gmail.com", date, 150.00, 1));
     houseList.get(1).getTenantList().add(new Tenant("James Ronaldson", "RONALDSON J", "0123456789012", "james_ronaldson@gmail.com", date, 150.00, 1));
     houseList.get(1).getTenantList().add(new Tenant("Steven Anglin", "S S ANGLIN", "01234567890123", "steven_anglin@gmail.com", date, 150.00, 1));
+    */
+    
+    //populate houseLst using XML file
+	  houseList = xmlRW.readTenantsXML(bAcc);
     
     /** Read and parse CSV file containing bank transactions */
     System.out.println("Opening CSV file: " + csv_file);
@@ -113,9 +120,9 @@ public class RentTracker {
               } else {
                 // otherwise we prompt the user to confirm whether its a rental payment or not
                 System.out.println("----------------------------------------");
-                System.out.println(tr.getDate().toString() + ": " + tr.getAmount() + " - " + t.getPaymentHandle());
+                System.out.println(sdf.format(tr.getDate()) + ": " + tr.getAmount() + " - " + t.getPaymentHandle());
                 System.out.print("Is this payment a rental payment for " + h.getName() + "? (y/n): ");
-                
+ 
                 if(input.readLine().toLowerCase().trim().equals("y")) {
                   // if they type 'y', then flag the payment as a rental payment
                   System.out.println(" ---> Payment marked as rent");
@@ -141,24 +148,24 @@ public class RentTracker {
       for(Tenant t : h.getTenantList()) {
         for (Transaction tr : t.getTransactionList()) {
           System.out.println("----------------------------");
-          System.out.println(tr.getDate().toString() + " | " + h.getName() + " : " + t.getName() + " - " + tr.getAmount());
+          System.out.println(sdf.format(tr.getDate()) + " | " + h.getName() + " : " + t.getName() + " - " + df.format(tr.getAmount()));
+
           try {
-         //   calendar.addRentPayment(h.getName(), t.getName(), tr);
+            calendar.addRentPayment(h.getName(), t.getName(), tr);
           } catch (Exception e) {
             System.out.println("Failed to update Calendar. The rent payment may already be saved from a previous session");
           }
           System.out.println("");
         }
+        System.out.println(t.getName() + " - Days rented: " + (int) Math.round(t.getTotalRentExpected() * 7 / t.getWeeklyRent()));
+        System.out.println("Total rent expected: " + df.format(t.getTotalRentExpected()));
+        System.out.println("Total rent paid: " + df.format(t.getTotalRentPaid()));
+        System.out.println("----");
       }
     }
-		
-		Date d1 = sdf.parse("2015/04/15");
-		Date d2 = sdf.parse("2015/04/30");
-		
-		System.out.println("Total rent paid by Flo: " + houseList.get(0).getTenantList().get(1).getTotalRentPaid(d1, d2));
-		System.out.println("Total rent expected by Flo: " + houseList.get(0).getTenantList().get(1).getTotalRentExpected(d1, d2));
-		
-		xmlRW.writeTenantsXML(houseList);
+    if(houseList.size() != 0) {
+		  xmlRW.writeTenantsXML(houseList);
+    }
 	}
 	
 	/** Checks to see if the payment amount is a multiple of the rent.

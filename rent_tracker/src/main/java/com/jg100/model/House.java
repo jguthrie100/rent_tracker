@@ -1,6 +1,7 @@
 package com.jg100.model;
 
 import java.util.ArrayList;
+import java.text.DecimalFormat;
 
 /**
  * House class to model houses that the landlord rents out 
@@ -98,5 +99,11 @@ public class House {
   
   public ArrayList<Tenant> getTenantList() {
     return this.tenantList;
+  }
+  
+  public String toString() {
+    DecimalFormat df = new DecimalFormat("0.00");
+    return ("name: \"" + this.name + "\"; address: \"" + this.address + "\"; numBedrooms: " + this.numBedrooms
+            + "; weeklyRent: " + df.format(this.weeklyRent) + "; agencyFees: " + df.format(this.agencyFees));
   }
 }

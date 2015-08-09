@@ -1,6 +1,8 @@
 package com.jg100.model;
 
 import java.util.Date;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 
 /** Transaction class that models every payment that is recorded in the online banking CSV file */
 public class Transaction {
@@ -137,8 +139,10 @@ public class Transaction {
   }
   
   public String toString() {
-    return (getDate().toString() + "; ID: " + getId() + "; Type: " + getType()
-            + "; Cheque Num: " + getChequeNum() + "; Payee: " + getPayee() + "; Memo: "
-            + getMemo() + "; Amount: " + getAmount());
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+    DecimalFormat df = new DecimalFormat("0.00");
+    
+    return ("bankAccountId: " + this.bankAccountId + "; date: " + sdf.format(getDate()) + "; id: " + this.id + "; type: \"" + this.type +
+            "\"; chequeNum: \"" + this.chequeNum + "\"; payee: \"" + this.payee + "\"; memo: \"" + this.memo + "\"; amount: " + df.format(this.amount));
   }
 }

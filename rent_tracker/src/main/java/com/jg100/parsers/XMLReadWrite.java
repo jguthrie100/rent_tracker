@@ -17,9 +17,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.OutputKeys;
  
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.*;
 
 /** XMLReadWrite reads and writes various pieces of information (relating to tenants, houses, transactions etc) from/to XML files
  *  Essentialy acts as a sort of database handler, wherein information is transferred from XML files to the program
@@ -41,10 +39,12 @@ public class XMLReadWrite {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		  docBuilder = docFactory.newDocumentBuilder();
 		  
+		  // Objects for outputting XML
 		  TransformerFactory transformerFactory = TransformerFactory.newInstance();
 	    transformer = transformerFactory.newTransformer();
 	    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+      
     } catch (ParserConfigurationException pce) {
 		pce.printStackTrace();
     } catch (TransformerException tfe) {
@@ -124,7 +124,7 @@ public class XMLReadWrite {
 		  level2.appendChild(doc.createTextNode("" + h.getNumBedrooms()));
 		  level1.appendChild(level2);
 		  
-		  level2 = doc.createElement("rent");
+		  level2 = doc.createElement("weeklyRent");
 		  level2.appendChild(doc.createTextNode(df.format(h.getWeeklyRent())));
 		  level1.appendChild(level2);
 		  
@@ -170,7 +170,7 @@ public class XMLReadWrite {
 		    }
 		    level3.appendChild(level4);
 		    
-		    level4 = doc.createElement("rentAmount");
+		    level4 = doc.createElement("weeklyRent");
 		    level4.appendChild(doc.createTextNode(df.format(t.getWeeklyRent())));
 		    level3.appendChild(level4);
 		    
@@ -209,5 +209,78 @@ public class XMLReadWrite {
   	} catch (TransformerException tfe) {
   	  tfe.printStackTrace();
     }
+  }
+  
+  public ArrayList<House> readTenantsXML(BankAccount bAcc) {
+    return readTenantsXML(bAcc, xmlFile);
+  }
+  
+  public ArrayList<House> readTenantsXML(BankAccount bAcc, String inputXMLFile) {
+    ArrayList<House> houseList = new ArrayList<House>();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+    
+    try {
+      // Objects for parsing XML
+      Document doc = docBuilder.parse(inputXMLFile);
+      doc.getDocumentElement().normalize();
+      
+      // Start parsing nodes
+      Node houseListNode = doc.getDocumentElement();         // <houseList>
+      NodeList houseNodes = houseListNode.getChildNodes();   // List of <house> nodes
+      
+      // Loop through list of houses
+      for(int i = 0, len = houseNodes.getLength(); i < len; i++) {
+        Node houseNode = houseNodes.item(i);                 // <house> node
+        
+        if(houseNode.getNodeType() == Node.ELEMENT_NODE) { // ensure its a NODE type
+          Element houseElement = (Element) houseNode;
+          
+          // Construct House object using XML data
+          House house = new House(
+            houseElement.getElementsByTagName("name").item(0).getTextContent(),
+            houseElement.getElementsByTagName("address").item(0).getTextContent(),
+            Integer.parseInt(houseElement.getElementsByTagName("numBedrooms").item(0).getTextContent()),
+            Double.parseDouble(houseElement.getElementsByTagName("weeklyRent").item(0).getTextContent()),
+            Double.parseDouble(houseElement.getElementsByTagName("agencyFees").item(0).getTextContent())
+          );
+          
+          NodeList tenantListNode = houseElement.getElementsByTagName("tenantList");
+          NodeList tenantNodes = tenantListNode.item(0).getChildNodes();      // list of <tenant> nodes
+          
+          // Loop through list of tenants
+          for(int j = 0, len2 = tenantNodes.getLength(); j < len2; j++) {
+            Node tenantNode = tenantNodes.item(j);              // <tenant> node
+            
+            if(tenantNode.getNodeType() == Node.ELEMENT_NODE) { // ensure its a NODE type
+              Element tenantElement = (Element) tenantNode;
+              
+              // Construct Tenant object using XML data
+              Tenant tenant = new Tenant(
+                tenantElement.getElementsByTagName("name").item(0).getTextContent(),
+                tenantElement.getElementsByTagName("paymentHandle").item(0).getTextContent(),
+                tenantElement.getElementsByTagName("phoneNum").item(0).getTextContent(),
+                tenantElement.getElementsByTagName("email").item(0).getTextContent(),
+                sdf.parse(tenantElement.getElementsByTagName("leaseStart").item(0).getTextContent()),
+                Double.parseDouble(tenantElement.getElementsByTagName("weeklyRent").item(0).getTextContent()),
+                Integer.parseInt(tenantElement.getElementsByTagName("rentFrequency").item(0).getTextContent())
+              );
+              
+              // if leaseEnd is null, don't set it in Tenant object
+              if(!tenantElement.getElementsByTagName("leaseEnd").item(0).getTextContent().isEmpty()) {
+                tenant.setLeaseEnd(sdf.parse(tenantElement.getElementsByTagName("leaseEnd").item(0).getTextContent()));
+              }
+              
+              // Add Tenant to list of tenants
+              house.getTenantList().add(tenant);
+            }
+          }
+          // Add House to list of houses
+          houseList.add(house);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return houseList;
   }
 }

@@ -3,6 +3,8 @@ package com.jg100.model;
 import org.joda.time.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * Tenant class to model each tenant 
@@ -195,7 +197,7 @@ public class Tenant {
    * Returns the total amount of rent that the tenant should have paid between two dates
    * 
    * @param dateFrom  Date from which the rent calculation should start 
-   * @param dateTo    Date to which the rent calculation should go until 
+   * @param dateTo    Date to which the rent calculation should go until (including that date) 
    * @return          Double value specifying the amount of rent the tenant should have paid between (and including) the two passed dates 
    */
   public double getTotalRentExpected(Date dateFrom, Date dateTo) {
@@ -205,9 +207,9 @@ public class Tenant {
       throw new IllegalArgumentException("Error: dateFrom (" + dateFrom + ") is after dateTo (" + dateTo + ")");
     }
     
-    int days = Days.daysBetween(new DateTime(dateFrom), new DateTime(dateTo)).getDays();
+    // Days between doesn't include dateTo in the calculation, so we have to manually add it on after
+    int days = (Days.daysBetween(new DateTime(dateFrom), new DateTime(dateTo)).getDays()) + 1;
     
-    System.out.println("days: " + days);
     return (days * this.weeklyRent / 7);
   }
   
@@ -219,5 +221,14 @@ public class Tenant {
    */
   public ArrayList<Transaction> getTransactionList() {
     return this.transactionList;
+  }
+  
+  public String toString() {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+    DecimalFormat df = new DecimalFormat("0.00");
+    return ("name: \"" + this.name + "\"; paymentHandle: \"" + this.paymentHandle + "\"; phoneNum: " + this.phoneNum +
+            "; email: " + this.email + "; leaseStart: " + sdf.format(this.leaseStart) + 
+            "; leaseEnd: " + ((leaseEnd != null) ? ("" + sdf.format(this.leaseEnd)) : "N/A") + "; weeklyRent: " + df.format(this.weeklyRent) +
+            "; rentFrequency: " + this.rentFrequency);
   }
 }
