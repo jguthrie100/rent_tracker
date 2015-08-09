@@ -211,11 +211,24 @@ public class XMLReadWrite {
     }
   }
   
-  public ArrayList<House> readTenantsXML(BankAccount bAcc) {
-    return readTenantsXML(bAcc, xmlFile);
+  /**
+   * Reads and parses the default XML file and uses the data to construct House and Tenant objects
+   * Essentially reads an 'XML database' of houses/tenants
+   * 
+   * @return ArrayList<House>   Returns an ArrayList containing a list of House (and respective Tenant) objects
+   */
+  public ArrayList<House> readTenantsXML() {
+    return readTenantsXML(xmlFile);
   }
   
-  public ArrayList<House> readTenantsXML(BankAccount bAcc, String inputXMLFile) {
+  /**
+   * Reads and parses the given XML file and uses the data to construct House and Tenant objects
+   * Essentially reads an 'XML database' of houses/tenants
+   * 
+   * @param inputXMLFile        XML file containing the <house> and <tenant> nodes/data
+   * @return ArrayList<House>   Returns an ArrayList containing a list of House (and respective Tenant) objects
+   */
+  public ArrayList<House> readTenantsXML(String inputXMLFile) {
     ArrayList<House> houseList = new ArrayList<House>();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
     
