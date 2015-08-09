@@ -61,7 +61,7 @@ public class RentTracker {
     houseList.get(1).getTenantList().add(new Tenant("Steven Anglin", "S S ANGLIN", "01234567890123", "steven_anglin@gmail.com", date, 150.00, 1));
     */
     
-    //populate houseLst using XML file
+    //populate houseList using XML file
 	  houseList = xmlRW.readTenantsXML(bAcc);
     
     /** Read and parse CSV file containing bank transactions */

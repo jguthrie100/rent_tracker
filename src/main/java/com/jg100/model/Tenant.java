@@ -226,9 +226,12 @@ public class Tenant {
   public String toString() {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
     DecimalFormat df = new DecimalFormat("0.00");
-    return ("name: \"" + this.name + "\"; paymentHandle: \"" + this.paymentHandle + "\"; phoneNum: " + this.phoneNum +
-            "; email: " + this.email + "; leaseStart: " + sdf.format(this.leaseStart) + 
-            "; leaseEnd: " + ((leaseEnd != null) ? ("" + sdf.format(this.leaseEnd)) : "N/A") + "; weeklyRent: " + df.format(this.weeklyRent) +
-            "; rentFrequency: " + this.rentFrequency);
+    
+    return (
+      "name: \"" + this.name + "\"; paymentHandle: \"" + this.paymentHandle + "\"; phoneNum: " + this.phoneNum +
+      "; email: " + this.email + "; leaseStart: " + sdf.format(this.leaseStart) + 
+      "; leaseEnd: " + ((leaseEnd != null) ? ("" + sdf.format(this.leaseEnd)) : "N/A") + "; weeklyRent: " + df.format(this.weeklyRent) +
+      "; rentFrequency: " + this.rentFrequency
+    );
   }
 }

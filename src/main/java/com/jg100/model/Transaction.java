@@ -142,7 +142,9 @@ public class Transaction {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
     DecimalFormat df = new DecimalFormat("0.00");
     
-    return ("bankAccountId: " + this.bankAccountId + "; date: " + sdf.format(getDate()) + "; id: " + this.id + "; type: \"" + this.type +
-            "\"; chequeNum: \"" + this.chequeNum + "\"; payee: \"" + this.payee + "\"; memo: \"" + this.memo + "\"; amount: " + df.format(this.amount));
+    return (
+      "bankAccountId: " + this.bankAccountId + "; date: " + sdf.format(getDate()) + "; id: " + this.id + "; type: \"" + this.type +
+      "\"; chequeNum: \"" + this.chequeNum + "\"; payee: \"" + this.payee + "\"; memo: \"" + this.memo + "\"; amount: " + df.format(this.amount)
+    );
   }
 }

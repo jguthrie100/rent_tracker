@@ -103,7 +103,10 @@ public class House {
   
   public String toString() {
     DecimalFormat df = new DecimalFormat("0.00");
-    return ("name: \"" + this.name + "\"; address: \"" + this.address + "\"; numBedrooms: " + this.numBedrooms
-            + "; weeklyRent: " + df.format(this.weeklyRent) + "; agencyFees: " + df.format(this.agencyFees));
+    
+    return (
+      "name: \"" + this.name + "\"; address: \"" + this.address + "\"; numBedrooms: " + this.numBedrooms
+      + "; weeklyRent: " + df.format(this.weeklyRent) + "; agencyFees: " + df.format(this.agencyFees)
+    );
   }
 }
