@@ -18,7 +18,7 @@ Future functionality for v1 includes:
  - Working out exactly how much tenant owes
  - Keeping track of the date when rent price increases occur and automatically applying the increases to tenants 
    from that date
-~~ - Reading all the tenant info from an XML file, rather than manually calling the methods in the RentTracker.java class~~ - DONE
+ - ~~Reading all the tenant info from an XML file, rather than manually calling the methods in the RentTracker.java class~~ - DONE
  - Improved Calendar functionality. i.e. updating rent events, setting reminders, sending chase up emails etc
  
 v2: Look at upgrading to a more comprehensive accounting package.
