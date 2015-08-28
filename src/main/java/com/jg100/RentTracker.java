@@ -8,10 +8,11 @@ import java.io.InputStreamReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Main class that runs the whole program
@@ -39,7 +40,7 @@ public class RentTracker {
     BankAccount bAcc = new BankAccount();
     ASBParser asbParser = new ASBParser(); // ASB is name of a bank in New Zealand
     CalendarAccessor calendar = new CalendarAccessor();
-    XMLReadWrite xmlRW = new XMLReadWrite();
+    XMLReadWrite xmlRW = new XMLReadWrite("/home/jg100/.config/tenants.xml");
     
     //populate houseList using data from XML file
 	  houseList = xmlRW.readTenantsXML();
@@ -141,14 +142,31 @@ public class RentTracker {
       BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
       boolean isRentPayment = false;
       
-  		for(Transaction tr : tc.getTransactions()) {
+  		transactionLoop: for(Transaction tr : tc.getTransactions()) {
   		  // loop through each transaction record
   		  
   		  isRentPayment = false;  // reset rentPayment flag just incase its still true from the previous loop
         
         for(House h : houseList) {  // loop through each house & then each tenant 
           for(Tenant t : h.getTenantList()) {
-            if((tr.getPayee().contains(t.getPaymentHandle()) || tr.getMemo().contains(t.getPaymentHandle())) && !isRentPayment) {
+            /* Loop through the transactions that have already been processed when reading the XML file of tenants
+               - If a transaction has already been marked as being a rental payment, then we can just set isRentPayment to true
+                 and skip checking again
+            */
+            for(int i = 0; i < t.getTransactionList().size(); i++) {
+              Transaction tr2 = t.getTransactionList().get(i);
+              
+              // If transaction has already been saved when parsing tenants.xml
+              if(tr2.getFullId().equals(tr.getFullId())) {
+                isRentPayment = true;
+                System.out.println("Already marked as rent: id = " + tr2.getFullId() + " (" + t.getName() + ")");
+                t.getTransactionList().remove(i);
+                break;
+              } else if(tr2.getBankAccountId().equals(tr.getBankAccountId()) && tr2.getId() > tr.getId()) {
+                break; // No point looping through rest of transactions
+              }
+            }
+            if(!isRentPayment && (tr.getPayee().contains(t.getPaymentHandle()) || tr.getMemo().contains(t.getPaymentHandle()))) {
               // if tenant's 'payment handle' matches transaction payee or memo fields, then we know the payment was made by this tenant
               
               if(rentMultiple(tr.getAmount(), t.getWeeklyRent(), 4)) {
@@ -167,20 +185,20 @@ public class RentTracker {
                   isRentPayment = true;
                 }
               }
+            }
+            // Add to tenant's list of rent payments if payment is a rental payment
+            if(isRentPayment) {
+              System.out.println("Saved rent payment: " + sdf.format(tr.getDate()) + ": $" + df.format(tr.getAmount()) + " - " + t.getPaymentHandle());
+              t.getTransactionList().add(tr);
               
-              // Add to tenant's list of rent payments if payment is a rental payment
-              if(isRentPayment) {
-                t.getTransactionList().add(tr);
-                
-                if(calendar != null) {
-                  // Add payment to the Calendar too
-                  try {
-                    calendar.addRentPayment(h.getName(), t.getName(), tr);
-                  } catch (Exception e) {
-                    System.out.println("Failed to update Calendar. Chances are the rent payment was already saved to the Calendar during a previous session");
-                  }
+              if(calendar != null) {
+                try {
+                  calendar.addRentPayment(h.getName(), t.getName(), tr);
+                } catch (Exception e) {
+                  System.out.println("Error: Failed to update Calendar");
                 }
               }
+              continue transactionLoop;
             }
           }
         }

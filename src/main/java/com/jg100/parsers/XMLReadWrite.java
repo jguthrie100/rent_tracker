@@ -29,13 +29,15 @@ public class XMLReadWrite {
   private static Transformer transformer;
   
   /* Default xml file to read from/write to */
-  private static String xmlFile = "/home/jg100/.config/tenants.xml";
+  private static String xmlFile = "";
   
   /**
    * XMLReadWrite constructor - Initiates the core XML read/write structures and objects so that they can be used in later methods
    */
-  public XMLReadWrite() {
+  public XMLReadWrite(String xmlFile) {
     try {
+      this.xmlFile = xmlFile;
+      
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		  docBuilder = docFactory.newDocumentBuilder();
 		  
@@ -281,6 +283,30 @@ public class XMLReadWrite {
               // if leaseEnd is null, don't set it in Tenant object
               if(!tenantElement.getElementsByTagName("leaseEnd").item(0).getTextContent().isEmpty()) {
                 tenant.setLeaseEnd(sdf.parse(tenantElement.getElementsByTagName("leaseEnd").item(0).getTextContent()));
+              }
+              
+              NodeList transactionListNode = tenantElement.getElementsByTagName("transactionList");
+              NodeList transactionNodes = transactionListNode.item(0).getChildNodes();      // list of <transaction> nodes
+              
+              // Loop through list of tenants
+              for(int k = 0, len3 = transactionNodes.getLength(); k < len3; k++) {
+                Node transactionNode = transactionNodes.item(k);              // <transaction> node
+                
+                if(transactionNode.getNodeType() == Node.ELEMENT_NODE) { // ensure its a NODE type
+                  Element transactionElement = (Element) transactionNode;
+                  
+                  String fullId = transactionElement.getAttributes().getNamedItem("id").getNodeValue();
+                  
+                  /* At the moment only handle ASB bank accs. May expand to other formats in future */
+                  if("ASB" == "ASB") {
+                    String bankAccountId = fullId.substring(0, 2) + "-" + fullId.substring(2, 6) + "-" + fullId.substring(6, 13)
+                                           + "-" + fullId.substring(13, 15);
+                    
+                    String transactionId = fullId.substring(15);
+                    
+                    tenant.getTransactionList().add(new Transaction(bankAccountId, Integer.parseInt(transactionId)));
+                  }
+                }
               }
               
               // Add Tenant to list of tenants

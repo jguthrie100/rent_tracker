@@ -1,5 +1,7 @@
 package com.jg100.model;
 
+import java.util.Date;
+
 /**
  * Class that models a bank account.
  * Contains information such as the sort code and account number (part of accountId) and account balance
@@ -37,5 +39,45 @@ public class BankAccount {
   
   public TransactionCollection getTransactionCollection() {
     return this.tCollection;
+  }
+  
+  public double getIncome() {
+    return getIncome(getTransactionCollection().getDateFrom(), getTransactionCollection().getDateTo());
+  }
+  
+  public double getIncome(Date dateFrom, Date dateTo) {
+    double income = 0.0;
+    
+    try {
+      for(Transaction tr : getTransactionCollection().getTransactions(dateFrom, dateTo)) {
+        if(tr.getAmount() > 0.0) {
+          income += tr.getAmount();
+        }
+      }
+    } catch (IllegalArgumentException e) {
+      throw e;
+    }
+    
+    return income;
+  }
+  
+  public double getOutgoings() {
+    return getOutgoings(getTransactionCollection().getDateFrom(), getTransactionCollection().getDateTo());
+  }
+  
+  public double getOutgoings(Date dateFrom, Date dateTo) {
+    double outgoings = 0.0;
+    
+    try {
+      for(Transaction tr : getTransactionCollection().getTransactions(dateFrom, dateTo)) {
+        if(tr.getAmount() < 0.0) {
+          outgoings += tr.getAmount();
+        }
+      }
+    } catch (IllegalArgumentException e) {
+      throw e;
+    }
+    
+    return outgoings;
   }
 }

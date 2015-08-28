@@ -18,7 +18,7 @@ public class TransactionCollection {
   }
   
   /** Constructor creates new empty collection of transactions that are between given dates */
-  TransactionCollection(Date dateFrom, Date dateTo) {
+  public TransactionCollection(Date dateFrom, Date dateTo) {
     /* Use setter methods for improved exception handling */
     setDateFrom(dateFrom);
     setDateTo(dateTo);

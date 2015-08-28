@@ -38,6 +38,11 @@ public class Transaction {
     setAmount(amount);
   }
   
+  public Transaction(String bankAccountId, int id) {
+    setBankAccountId(bankAccountId);
+    setId(id);
+  }
+  
   public String getBankAccountId() {
     return this.bankAccountId;
   }
